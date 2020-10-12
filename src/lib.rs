@@ -13,8 +13,8 @@ use rand::SeedableRng;
 use std::f64;
 use std::os::raw::{c_double, c_int};
 
-use self::controllers::{Actions, CollisionsController, TimeController};
-use self::game_state::GameState;
+use self::controllers::{Actions, CollisionsController};
+use self::game_state::{GameState, TimeController};
 use self::geometry::Size;
 
 use wasm_bindgen::prelude::*;

@@ -8,6 +8,7 @@ use crate::geometry::{Point, Size};
 #[derive(Default)]
 pub struct Player {
     pub vector: Vector,
+    pub speed: f64,
 }
 
 derive_position_direction!(Player);
@@ -20,6 +21,7 @@ impl Player {
     pub fn random<R: Rng>(rng: &mut R, bounds: Size) -> Player {
         Player {
             vector: Vector::random(rng, bounds),
+            speed: 1000.0,
         }
     }
 
