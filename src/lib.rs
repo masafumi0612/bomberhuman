@@ -28,7 +28,7 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 #[wasm_bindgen]
 pub struct GameData {
     state: GameState,
-    actions: Actions,
+//    actions: Actions,
     time_controller: TimeController<Pcg32Basic>,
 }
 
@@ -40,7 +40,7 @@ impl GameData {
         let height = draw.height();
         GameData {
             state: GameState::new(Size::new(width, height)),
-            actions: Actions::default(),
+//            actions: Actions::default(),
             time_controller: TimeController::new(Pcg32Basic::from_seed([42, 42])),
         }
     }
@@ -50,37 +50,44 @@ impl GameData {
         let new_player_vector = Vector::new(new_player_position, 0.0);
         let new_player = Player::new(new_player_vector, 1000.0);
         self.state.world.player.push(new_player);
+        self.state.world.actions.push(Actions::default());
     }
 
     pub fn update(&mut self, time: c_double) {
-        self.time_controller
-            .update_seconds(time, &self.actions, &mut self.state);
-        CollisionsController::handle_collisions(&mut self.state);
+        let mut i: usize = 0;
+        while i < self.state.world.player.len() {
+//            let mut actions = self.state.world.actions[i];
+
+            self.time_controller
+                .update_seconds(time, &mut self.state, i);
+            CollisionsController::handle_collisions(&mut self.state);
+            i =  i+ 1;
+        }
     }
 
-    pub fn toggle_shoot(&mut self, b: c_int) {
+    pub fn toggle_shoot(&mut self, b: c_int, num_player: usize) {
         //    let data = &mut DATA.lock().unwrap();
-        self.actions.shoot = int_to_bool(b);
+        self.state.world.actions[num_player].shoot = int_to_bool(b);
     }
 
-    pub fn toggle_up(&mut self, b: c_int) {
+    pub fn toggle_up(&mut self, b: c_int, num_player: usize) {
         //    let data = &mut DATA.lock().unwrap();
-        self.actions.up = int_to_bool(b);
+        self.state.world.actions[num_player].up = int_to_bool(b);
     }
 
-    pub fn toggle_down(&mut self, b: c_int) {
+    pub fn toggle_down(&mut self, b: c_int, num_player: usize) {
         //    let data = &mut DATA.lock().unwrap();
-        self.actions.down = int_to_bool(b);
+        self.state.world.actions[num_player].down = int_to_bool(b);
     }
 
-    pub fn toggle_left(&mut self, b: c_int) {
+    pub fn toggle_left(&mut self, b: c_int, num_player: usize) {
         //    let data = &mut DATA.lock().unwrap();
-        self.actions.left = int_to_bool(b);
+        self.state.world.actions[num_player].left = int_to_bool(b);
     }
 
-    pub fn toggle_right(&mut self, b: c_int) {
+    pub fn toggle_right(&mut self, b: c_int, num_player: usize) {
         //    let data = &mut DATA.lock().unwrap();
-        self.actions.right = int_to_bool(b);
+        self.state.world.actions[num_player].right = int_to_bool(b);
     }
 
     pub fn resize(mut self) {

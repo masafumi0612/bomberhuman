@@ -10,7 +10,7 @@ use crate::models::World;
 use super::Actions;
 //use crate::game_state::GameState;
 use crate::geometry::{Advance, Point, Position, Size};
-use crate::models::{Bullet, Enemy, Particle, Vector};
+use crate::models::{Player, Bullet, Enemy, Particle, Vector};
 use crate::util;
 
 
@@ -95,113 +95,117 @@ impl<T: Rng> TimeController<T> {
     /// Updates the game
     ///
     /// `dt` is the amount of seconds that have passed since the last update
-    pub fn update_seconds(&mut self, dt: f64, actions: &Actions, state: &mut GameState) {
+    pub fn update_seconds(&mut self, dt: f64, state: &mut GameState, num_player: usize) {
         self.current_time += dt;
 
         // Update rocket rotation
-        for player in &mut state.world.player {
-            if actions.up {
-    //            *state.world.player.direction_mut() += -ROTATE_SPEED * dt;
-                *player.direction_mut() = 1.5 * f64::consts::PI;
-            }
-            if actions.down {
-    //            *state.world.player.direction_mut() += -ROTATE_SPEED * dt;
-                *player.direction_mut() = 0.5 * f64::consts::PI;
-            }
-            if actions.left {
-    //            *state.world.player.direction_mut() += -ROTATE_SPEED * dt;
-                *player.direction_mut() = f64::consts::PI;
-            }
-            if actions.right {
-    //            *state.world.player.direction_mut() += ROTATE_SPEED * dt;
-                *player.direction_mut() = 0.0;
-            };
 
-            // Set speed and advance the player with wrap around
-            let speed = if actions.up || actions.down || actions.left || actions.right {
-                player.speed
-            } else {
-                0.0
-            };
-                player.advance_wrapping(dt * speed, state.world.size);
-
-            // Update particles
-            for particle in &mut state.world.particles {
-                particle.update(dt);
-            }
-
-            // Remove old particles
-            util::fast_retain(&mut state.world.particles, |p| p.ttl > 0.0);
-
-            // Add new particles at the player's position, to leave a trail
-            if self.current_time - self.last_tail_particle > TRAIL_PARTICLE_RATE {
-                self.last_tail_particle = self.current_time;
-                state.world.particles.push(Particle::new(
-                    player.vector.clone().invert(),
-                    0.5,
-                ));
-            }
-
-            // Add bullets
-    /*
-            if actions.shoot && self.current_time - self.last_shoot > BULLET_RATE {
-                self.last_shoot = self.current_time;
-                state.world.bullets.push(Bullet::new(Vector::new(
-                    state.world.player.front(),
-                    state.world.player.direction(),
-                )));
-            }
-
-            // Advance bullets
-            for bullet in &mut state.world.bullets {
-                bullet.update(dt * BULLET_SPEED);
-            }
-
-            // Remove bullets outside the viewport
-            {
-                // Shorten the lifetime of size
-                let size = &state.world.size;
-                util::fast_retain(&mut state.world.bullets, |b| size.contains(b.position()));
-            }
-    */
-            // Spawn enemies at random locations
-    /*
-            if self.current_time - self.last_spawned_enemy > ENEMY_SPAWN_RATE {
-                self.last_spawned_enemy = self.current_time;
-
-                let player_pos: &Vector = &state.world.player.vector;
-                let mut enemy_pos;
-                // We loop here, just in case the new enemy random position is exactly equal
-                // to the players current position, this would break our calculations below
-                loop {
-                    enemy_pos = Vector::random(&mut self.rng, state.world.size);
-                    if enemy_pos.position != player_pos.position {
-                        break;
-                    }
-                }
-                // Check if the newly spawned enemy is inside the player's grace area,
-                // if so, we push its spawn point to the edge of the area
-                if enemy_pos
-                    .position
-                    .intersect_circle(&player_pos.position, PLAYER_GRACE_AREA)
-                {
-                    let length: f64 = enemy_pos
-                        .position
-                        .squared_distance_to(&player_pos.position)
-                        .sqrt();
-                    let dp: Point = enemy_pos.position - player_pos.position;
-                    enemy_pos.position = player_pos.position + dp / length * PLAYER_GRACE_AREA;
-                }
-
-                let new_enemy = Enemy::new(enemy_pos);
-                state.world.enemies.push(new_enemy);
-            }
-
-            // Move enemies in the player's direction
-            for enemy in &mut state.world.enemies {
-                enemy.update(dt * ENEMY_SPEED, state.world.player.position());
-            }
-    */
+        if state.world.actions[num_player].up {
+//            *state.world.player.direction_mut() += -ROTATE_SPEED * dt;
+            *state.world.player[num_player].direction_mut() = 1.5 * f64::consts::PI;
         }
+        if state.world.actions[num_player].down {
+//            *state.world.player.direction_mut() += -ROTATE_SPEED * dt;
+            *state.world.player[num_player].direction_mut() = 0.5 * f64::consts::PI;
+        }
+        if state.world.actions[num_player].left {
+//            *state.world.player.direction_mut() += -ROTATE_SPEED * dt;
+            *state.world.player[num_player].direction_mut() = f64::consts::PI;
+        }
+        if state.world.actions[num_player].right {
+//            *state.world.player.direction_mut() += ROTATE_SPEED * dt;
+            *state.world.player[num_player].direction_mut() = 0.0;
+        };
+
+        // Set speed and advance the player with wrap around
+        let speed = if 
+        state.world.actions[num_player].up || 
+        state.world.actions[num_player].down || 
+        state.world.actions[num_player].left || 
+        state.world.actions[num_player].right {
+            state.world.player[num_player].speed
+        } else {
+            0.0
+        };
+            state.world.player[num_player].advance_wrapping(dt * speed, state.world.size);
+
+        // Update particles
+        for particle in &mut state.world.particles {
+            particle.update(dt);
+        }
+
+        // Remove old particles
+        /*
+        util::fast_retain(&mut state.world.particles, |p| p.ttl > 0.0);
+
+        // Add new particles at the player's position, to leave a trail
+        if self.current_time - self.last_tail_particle > TRAIL_PARTICLE_RATE {
+            self.last_tail_particle = self.current_time;
+            state.world.particles.push(Particle::new(
+                state.world.player[num_player].vector.clone().invert(),
+                0.5,
+            ));
+        }
+        */
+        // Add bullets
+/*
+        if actions.shoot && self.current_time - self.last_shoot > BULLET_RATE {
+            self.last_shoot = self.current_time;
+            state.world.bullets.push(Bullet::new(Vector::new(
+                state.world.player.front(),
+                state.world.player.direction(),
+            )));
+        }
+
+        // Advance bullets
+        for bullet in &mut state.world.bullets {
+            bullet.update(dt * BULLET_SPEED);
+        }
+
+        // Remove bullets outside the viewport
+        {
+            // Shorten the lifetime of size
+            let size = &state.world.size;
+            util::fast_retain(&mut state.world.bullets, |b| size.contains(b.position()));
+        }
+*/
+        // Spawn enemies at random locations
+/*
+        if self.current_time - self.last_spawned_enemy > ENEMY_SPAWN_RATE {
+            self.last_spawned_enemy = self.current_time;
+
+            let player_pos: &Vector = &state.world.player.vector;
+            let mut enemy_pos;
+            // We loop here, just in case the new enemy random position is exactly equal
+            // to the players current position, this would break our calculations below
+            loop {
+                enemy_pos = Vector::random(&mut self.rng, state.world.size);
+                if enemy_pos.position != player_pos.position {
+                    break;
+                }
+            }
+            // Check if the newly spawned enemy is inside the player's grace area,
+            // if so, we push its spawn point to the edge of the area
+            if enemy_pos
+                .position
+                .intersect_circle(&player_pos.position, PLAYER_GRACE_AREA)
+            {
+                let length: f64 = enemy_pos
+                    .position
+                    .squared_distance_to(&player_pos.position)
+                    .sqrt();
+                let dp: Point = enemy_pos.position - player_pos.position;
+                enemy_pos.position = player_pos.position + dp / length * PLAYER_GRACE_AREA;
+            }
+
+            let new_enemy = Enemy::new(enemy_pos);
+            state.world.enemies.push(new_enemy);
+        }
+
+        // Move enemies in the player's direction
+        for enemy in &mut state.world.enemies {
+            enemy.update(dt * ENEMY_SPEED, state.world.player.position());
+        }
+*/
     }
 }
