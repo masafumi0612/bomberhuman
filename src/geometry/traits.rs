@@ -59,9 +59,11 @@ pub trait Advance: Position {
 
         fn wrap(k: &mut f64, bound: f64) {
             if *k < 0.0 {
-                *k += bound;
+//                *k += bound;
+                *k = 0.0;
             } else if *k >= bound {
-                *k -= bound;
+//                *k -= bound;
+                *k = bound;
             }
         }
 

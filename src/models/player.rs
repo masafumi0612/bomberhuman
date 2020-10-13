@@ -17,6 +17,13 @@ derive_position_direction!(Player);
 pub const POLYGON: &'static [[f64; 2]] = &[[0.0, -8.0], [20.0, 0.0], [0.0, 8.0]];
 
 impl Player {
+    pub fn new(vector: Vector, player_speed: f64) -> Player {
+        Player {
+            vector: vector, 
+            speed: player_speed,
+        }
+    }
+
     /// Create a new `Player` with a random position and direction
     pub fn random<R: Rng>(rng: &mut R, bounds: Size) -> Player {
         Player {

@@ -1,6 +1,8 @@
 import { GameData } from "wasm-game-of-life";
 
 let gamedata = GameData.new(512.0, 300.0)
+gamedata.create_player(300, 200);
+gamedata.create_player(800, 600);
 
 // Input processing
 function processKey(key, b) {

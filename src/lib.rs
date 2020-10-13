@@ -13,9 +13,10 @@ use rand::SeedableRng;
 use std::f64;
 use std::os::raw::{c_double, c_int};
 
+use self::models::{Player, Vector};
 use self::controllers::{Actions, CollisionsController};
 use self::game_state::{GameState, TimeController};
-use self::geometry::Size;
+use self::geometry::{Point, Size};
 
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
@@ -42,6 +43,13 @@ impl GameData {
             actions: Actions::default(),
             time_controller: TimeController::new(Pcg32Basic::from_seed([42, 42])),
         }
+    }
+
+    pub fn create_player(&mut self, x: f64, y: f64) {
+        let new_player_position = Point::new(x, y);
+        let new_player_vector = Vector::new(new_player_position, 0.0);
+        let new_player = Player::new(new_player_vector, 1000.0);
+        self.state.world.player.push(new_player);
     }
 
     pub fn update(&mut self, time: c_double) {
@@ -101,7 +109,9 @@ impl GameData {
             draw.draw_enemy(enemy.x(), enemy.y());
         }
 */
-        draw.draw_player(world.player.x(), world.player.y(), world.player.direction());
+        for player in &mut self.state.world.player {
+            draw.draw_player(player.x(), player.y(), player.direction());
+        }
         draw.draw_score(self.state.score as f64);
     }
 }
