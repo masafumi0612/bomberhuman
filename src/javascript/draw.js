@@ -12,34 +12,6 @@ function resources() {
 	particle: document.createElement('canvas')
     }
 
-    // Particle
-    res.particle.width = 20;
-    res.particle.height = 20;
-    let pCtx = res.particle.getContext('2d');
-    pCtx.fillStyle = "darkviolet";
-    pCtx.beginPath();
-    pCtx.arc(10, 10, 10, 0, 2 * Math.PI);
-    pCtx.fill();
-/*
-    // Bullet
-    res.bullet.width = 6;
-    res.bullet.height = 6;
-    let bCtx = res.bullet.getContext('2d');
-    bCtx.fillStyle = "blue";
-    bCtx.beginPath();
-    bCtx.arc(3, 3, 3, 0, 2 * Math.PI);
-    bCtx.fill();
-*/
-/*
-    // Enemy
-    res.enemy.width = 20;
-    res.enemy.height = 20;
-    let eCtx = res.enemy.getContext('2d');
-    eCtx.fillStyle = "yellow";
-    eCtx.beginPath();
-    eCtx.arc(10, 10, 10, 0, 2 * Math.PI);
-    eCtx.fill();
-*/
     // Player
     res.player.width = 20;
     res.player.height = 20;
@@ -48,9 +20,6 @@ function resources() {
     plCtx.beginPath();
     plCtx.arc(10, 10, 10, 0, 2 * Math.PI);
 
-//    plCtx.lineTo(20, 8);
-//    plCtx.lineTo(0, 16);
-//    plCtx.lineTo(0, 0);
     plCtx.fill();
 
     return res;
@@ -84,20 +53,6 @@ export class Draw {
 	ctx.setTransform(1, 0, 0, 1, 0, 0);
 	
 	ctx.fillStyle = "black";
-	//ctx.fillRect(x - 17, y - 12, 4, 4);
-    }
-/*
-    draw_enemy(x, y) {
-	ctx.drawImage(res.enemy, x - 10, y - 10);
-    }
-*/
-/*
-    draw_bullet(x, y) {
-	ctx.drawImage(res.bullet, x - 3, y - 3);
-    }
-*/
-    draw_particle(x, y, radius) {
-	ctx.drawImage(res.particle, x - radius, y - radius, 2 * radius, 2 * radius);
     }
 
     draw_score(x) {

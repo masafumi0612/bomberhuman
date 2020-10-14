@@ -2,7 +2,7 @@ use crate::game_state::GameState;
 use crate::geometry::{Collide, Position};
 use crate::util;
 
-const SCORE_PER_ENEMY: u32 = 10;
+//const SCORE_PER_ENEMY: u32 = 10;
 
 pub struct CollisionsController;
 
