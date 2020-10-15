@@ -7,7 +7,7 @@ use std::f64;
 use crate::models::World;
 
 use crate::geometry::{Advance, Position, Size};
-use crate::util;
+//use crate::util;
 
 /// The data structure that contains the state of the game
 pub struct GameState {

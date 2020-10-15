@@ -1,6 +1,6 @@
 use crate::game_state::GameState;
 use crate::geometry::{Collide, Position};
-use crate::util;
+//use crate::util;
 
 //const SCORE_PER_ENEMY: u32 = 10;
 

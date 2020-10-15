@@ -6,7 +6,7 @@ mod controllers;
 mod game_state;
 mod geometry;
 mod models;
-mod util;
+//mod util;
 
 use pcg_rand::Pcg32Basic;
 use rand::SeedableRng;
