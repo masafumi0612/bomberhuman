@@ -13,41 +13,23 @@ use crate::util;
 pub struct GameState {
     /// The world contains everything that needs to be drawn
     pub world: World,
-    /// The current score of the player
-    pub score: u32,
+    current_time: f64,
 }
 
 impl GameState {
     /// Returns a new `GameState` containing a `World` of the given `Size`
     pub fn new(size: Size) -> GameState {
-       GameState {
+        GameState {
             world: World::new(size),
-            score: 0,
-        }
-    }
-}
-
-/// Timers to handle creation of bullets, enemies and particles
-pub struct TimeController<T: Rng> {
-    /// A random number generator
-    rng: T,
-    current_time: f64,
-}
-
-impl<T: Rng> TimeController<T> {
-    pub fn new(rng: T) -> TimeController<T> {
-        TimeController {
-            rng,
             current_time: 0.0,
         }
     }
 
-    /// Updates the game
+        /// Updates the game
     ///
     /// `dt` is the amount of seconds that have passed since the last update
-    pub fn update_seconds(&mut self, dt: f64, state: &mut GameState, num_player: usize) {
-        self.current_time += dt;
-
+    pub fn update_seconds(state: &mut GameState, dt: f64, num_player: usize) {
+        state.current_time += dt;
         // Update rocket rotation
 
         if state.world.actions[num_player].up {
@@ -80,3 +62,4 @@ impl<T: Rng> TimeController<T> {
             state.world.player[num_player].advance_wrapping(dt * speed, state.world.size);
     }
 }
+

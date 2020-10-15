@@ -15,7 +15,7 @@ use std::os::raw::{c_double, c_int};
 
 use self::models::{Player, Vector};
 use self::controllers::{Actions, CollisionsController};
-use self::game_state::{GameState, TimeController};
+use self::game_state::GameState;
 use self::geometry::{Point, Size};
 
 use wasm_bindgen::prelude::*;
@@ -28,7 +28,6 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 #[wasm_bindgen]
 pub struct GameData {
     state: GameState,
-    time_controller: TimeController<Pcg32Basic>,
 }
 
 #[wasm_bindgen]
@@ -39,7 +38,6 @@ impl GameData {
         let height = draw.height();
         GameData {
             state: GameState::new(Size::new(width, height)),
-            time_controller: TimeController::new(Pcg32Basic::from_seed([42, 42])),
         }
     }
 
@@ -55,8 +53,7 @@ impl GameData {
         let mut i: usize = 0;
         while i < self.state.world.player.len() {
 
-            self.time_controller
-                .update_seconds(time, &mut self.state, i);
+            GameState::update_seconds(&mut self.state, time, i);
             CollisionsController::handle_collisions(&mut self.state);
             i =  i+ 1;
         }
@@ -96,7 +93,6 @@ impl GameData {
         for player in &mut self.state.world.player {
             draw.draw_player(player.x(), player.y(), player.direction());
         }
-        draw.draw_score(self.state.score as f64);
     }
 }
 
@@ -123,7 +119,4 @@ extern "C" {
 
     #[wasm_bindgen(method)]
     pub fn draw_player(this: &Draw, _: c_double, _: c_double, _: c_double);
-
-    #[wasm_bindgen(method)]
-    pub fn draw_score(this: &Draw, _: c_double);
 }
