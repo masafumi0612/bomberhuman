@@ -32,10 +32,10 @@ pub struct GameData {
 
 #[wasm_bindgen]
 impl GameData {
-    pub fn new() -> GameData {
+    pub fn new(x: f64, y: f64) -> GameData {
         let draw = Draw::new();
-        let width = draw.width();
-        let height = draw.height();
+        let width = draw.width(x);
+        let height = draw.height(y);
         GameData {
             state: GameState::new(Size::new(width, height)),
         }
@@ -78,11 +78,11 @@ impl GameData {
     pub fn toggle_right(&mut self, b: c_int, num_player: usize) {
         self.state.world.actions[num_player].right = int_to_bool(b);
     }
-
+/*
     pub fn resize(&mut self) {
         GameData::new();
     }
-
+*/
     pub fn draw(&mut self) {
         use geometry::{Advance, Position};
 
@@ -93,6 +93,42 @@ impl GameData {
         for player in &mut self.state.world.player {
             draw.draw_player(player.x(), player.y(), player.direction());
         }
+        let mut wall_width = 25.0;
+        let mut wall_height = 25.0;
+        while wall_width < 750.0 {
+              draw.draw_wall(wall_width, wall_height);
+              wall_width+= 50.0;
+        }
+        wall_width = 25.0;
+        wall_height = 625.0;
+        while wall_width < 750.0 {
+              draw.draw_wall(wall_width, wall_height);
+              wall_width+= 50.0;
+        }
+        wall_width = 25.0;
+        wall_height = 75.0;
+        while wall_height < 650.0 {
+              draw.draw_wall(wall_width, wall_height);
+              wall_height+= 50.0;
+        }
+        wall_width = 725.0;
+        wall_height = 75.0;
+        while wall_height <= 650.0 {
+              draw.draw_wall(wall_width, wall_height);
+              wall_height+= 50.0;
+        }
+        wall_width = 125.0;
+        wall_height = 125.0;
+        while wall_height < 575.0 {
+              while wall_width < 675.0 {
+                    draw.draw_wall(wall_width, wall_height);
+                    wall_width += 100.0;
+              }
+              wall_width = 125.0;
+              wall_height += 100.0;
+        }
+
+
     }
 }
 
@@ -109,14 +145,18 @@ extern "C" {
     pub fn new() -> Draw;
 
     #[wasm_bindgen(method)]
-    pub fn width(this: &Draw) -> f64;
+    pub fn width(this: &Draw, x: f64) -> f64;
 
     #[wasm_bindgen(method)]
-    pub fn height(this: &Draw) -> f64;
+    pub fn height(this: &Draw, y: f64) -> f64;
 
     #[wasm_bindgen(method)]
     pub fn clear_screen(this: &Draw);
 
     #[wasm_bindgen(method)]
     pub fn draw_player(this: &Draw, _: c_double, _: c_double, _: c_double);
+
+    #[wasm_bindgen(method)]
+    pub fn draw_wall(this: &Draw, _: c_double, _: c_double);
+
 }

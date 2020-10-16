@@ -2,7 +2,7 @@ import { GameData } from "wasm-game-of-life";
 
 let num_player = prompt("プレイヤーの人数を選択してください(1〜4まで選択できます)");
 
-let gamedata = GameData.new(512.0, 300.0)
+let gamedata = GameData.new(750.0, 650.0);
 
 // Input processing
 function processKey(key, b) {
@@ -64,7 +64,7 @@ function processKey(key, b) {
 
 document.addEventListener('keydown', e => processKey(e.key, true));
 document.addEventListener('keyup', e => processKey(e.key, false));
-
+/*
 function resize() {
     gamedata = GameData.new();
 }
@@ -80,7 +80,7 @@ window.addEventListener('resize', () => {
         player_y = player_y + 100;
     }    
 });
-
+*/
 
 // Game loop
 let start = null;
