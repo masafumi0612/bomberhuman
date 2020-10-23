@@ -2,7 +2,7 @@ import { GameData } from "wasm-game-of-life";
 
 let num_player = prompt("プレイヤーの人数を選択してください(1〜4まで選択できます)");
 
-let gamedata = GameData.new(750.0, 650.0);
+let gamedata = GameData.new();
 
 // Input processing
 function processKey(key, b) {
@@ -104,6 +104,7 @@ let drawAndUpdate = (timestamp) => {
     prevTimestamp = timestamp;
     requestAnimationFrame(drawAndUpdate);
 };
+/*
 let i = 0;
 let player_x = 300;
 let player_y = 200;
@@ -112,5 +113,11 @@ for(i = 0; i < num_player; i = i + 1){
     player_x = player_x + 100;
     player_y = player_y + 100;
 }
+*/
+gamedata.create_player(175,175);
+gamedata.create_player(525,525);
+
+gamedata.create_wall();
+
 drawAndUpdate();
 //});

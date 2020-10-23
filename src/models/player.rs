@@ -13,9 +13,6 @@ pub struct Player {
 
 derive_position_direction!(Player);
 
-/// The player is represented as the polygon below
-pub const POLYGON: &'static [[f64; 2]] = &[[0.0, -8.0], [20.0, 0.0], [0.0, 8.0]];
-
 impl Player {
     ///Create a new `Player`
     pub fn new(vector: Vector, player_speed: f64) -> Player {
