@@ -52,12 +52,12 @@ impl GameState {
             state.world.player[num_player].vector.direction = 0.0;
         };
 
-        let ptow_collision_flag = CollisionsController::player_walls_collision(state, num_player, GRID);
+//        let ptow_collision_flag = CollisionsController::player_walls_collision(state, num_player, GRID);
 
         // Set speed and advance the player with wrap around
-        let mut speed = if ptow_collision_flag {
+        let mut speed =/* if ptow_collision_flag {
             0.0
-        }else if 
+        }else */if 
             state.world.actions[num_player].up || 
             state.world.actions[num_player].down || 
             state.world.actions[num_player].left || 
