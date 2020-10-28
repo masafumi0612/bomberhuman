@@ -1,6 +1,6 @@
 import { GameData } from "wasm-game-of-life";
 
-let num_player = prompt("プレイヤーの人数を選択してください(1〜4まで選択できます)");
+//let num_player = prompt("プレイヤーの人数を選択してください(1〜4まで選択できます)");
 
 let gamedata = GameData.new();
 
@@ -120,10 +120,11 @@ for(i = 0; i < num_player; i = i + 1){
     player_y = player_y + 100;
 }
 */
-gamedata.create_player(175,175);
-gamedata.create_player(575,525);
+gamedata.create_player(75,75);
+gamedata.create_player(675,575);
 
 gamedata.create_wall();
+gamedata.create_sblock();
 
 drawAndUpdate();
 //});

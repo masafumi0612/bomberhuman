@@ -9,11 +9,12 @@ mod models;
 //mod util;
 
 use pcg_rand::Pcg32Basic;
-use rand::SeedableRng;
+//use rand::SeedableRng;
+use rand::Rng;
 use std::f64;
 use std::os::raw::{c_double, c_int};
 
-use self::models::{Bomb, Fire, Player, Wall, Vector};
+use self::models::{Bomb, Fire, Player, SBlock, Wall, Vector};
 use self::controllers::{Actions, CollisionsController};
 use self::game_state::GameState;
 use self::geometry::{Point, Size};
@@ -108,6 +109,129 @@ impl GameData {
             wall_point_width = WALL_SIZE_WIDTH * 2.5;
             wall_point_height += WALL_SIZE_HEIGHT * 2.0;
         }
+    }
+
+    pub fn create_sblock(&mut self) {
+        
+        let mut new_sblock_position_x = 175.0;
+        let mut new_sblock_position_y = 125.0;
+        while new_sblock_position_y <= 575.0{
+            while new_sblock_position_x <= 600.0 {
+                let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
+                let new_sblock = SBlock::new(new_sblock_position);
+                let secret_number = rand::thread_rng().gen_range(0, 100);
+                if secret_number <= 50 {
+                    self.state.world.sblock.push(new_sblock);
+                }
+                new_sblock_position_x += GRID * 2.0;
+            }
+            new_sblock_position_y += GRID * 2.0;
+            new_sblock_position_x = 175.0;
+        }
+
+        new_sblock_position_x = 225.0;
+        new_sblock_position_y = 75.0;
+        while new_sblock_position_y <= 575.0{
+            while new_sblock_position_x <= 550.0 {
+                let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
+                let new_sblock = SBlock::new(new_sblock_position);
+                let secret_number = rand::thread_rng().gen_range(0, 100);
+                if secret_number <= 50 {
+                    self.state.world.sblock.push(new_sblock);
+                }
+                new_sblock_position_x += GRID;
+            }
+            new_sblock_position_y += GRID * 2.0;
+            new_sblock_position_x = 225.0;
+        }
+      
+        new_sblock_position_x = 125.0;
+        new_sblock_position_y = 175.0;
+        while new_sblock_position_y <= 475.0{
+            while new_sblock_position_x <= 175.0 {
+                let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
+                let new_sblock = SBlock::new(new_sblock_position);
+                let secret_number = rand::thread_rng().gen_range(0, 100);
+                if secret_number <= 50 {
+                    self.state.world.sblock.push(new_sblock);
+                }
+                new_sblock_position_x += GRID;
+            }
+            new_sblock_position_y += GRID * 2.0;
+            new_sblock_position_x = 125.0;
+        }
+      
+        new_sblock_position_x = 575.0;
+        new_sblock_position_y = 175.0;
+        while new_sblock_position_y <= 475.0{
+            while new_sblock_position_x <= 625.0 {
+                let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
+                let new_sblock = SBlock::new(new_sblock_position);
+                let secret_number = rand::thread_rng().gen_range(0, 100);
+                if secret_number <= 50 {
+                    self.state.world.sblock.push(new_sblock);
+                }
+                new_sblock_position_x += GRID;
+            }
+            new_sblock_position_y += GRID * 2.0;
+            new_sblock_position_x = 575.0;
+        }
+
+        new_sblock_position_x = 75.0;
+        new_sblock_position_y = 225.0;
+        while new_sblock_position_y <= 425.0{
+            let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
+            let new_sblock = SBlock::new(new_sblock_position);
+            let secret_number = rand::thread_rng().gen_range(0, 100);
+            if secret_number <= 50 {
+            self.state.world.sblock.push(new_sblock);
+            }
+            new_sblock_position_y += GRID;
+        }
+
+        new_sblock_position_x = 675.0;
+        new_sblock_position_y = 225.0;
+        while new_sblock_position_y <= 425.0{
+            let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
+            let new_sblock = SBlock::new(new_sblock_position);
+            let secret_number = rand::thread_rng().gen_range(0, 100);
+            if secret_number <= 50 {
+            self.state.world.sblock.push(new_sblock);
+            }
+            new_sblock_position_y += GRID;
+        }
+
+        let new_sblock_position = Point::new(175.0, 75.0);
+        let new_sblock = SBlock::new(new_sblock_position);
+        self.state.world.sblock.push(new_sblock);
+        
+        let new_sblock_position = Point::new(75.0, 175.0);
+        let new_sblock = SBlock::new(new_sblock_position);
+        self.state.world.sblock.push(new_sblock);
+
+        let new_sblock_position = Point::new(575.0, 75.0);
+        let new_sblock = SBlock::new(new_sblock_position);
+        self.state.world.sblock.push(new_sblock);
+
+        let new_sblock_position = Point::new(675.0, 175.0);
+        let new_sblock = SBlock::new(new_sblock_position);
+        self.state.world.sblock.push(new_sblock);
+
+        let new_sblock_position = Point::new(75.0, 475.0);
+        let new_sblock = SBlock::new(new_sblock_position);
+        self.state.world.sblock.push(new_sblock);
+
+        let new_sblock_position = Point::new(175.0, 575.0);
+        let new_sblock = SBlock::new(new_sblock_position);
+        self.state.world.sblock.push(new_sblock);
+
+        let new_sblock_position = Point::new(675.0, 475.0);
+        let new_sblock = SBlock::new(new_sblock_position);
+        self.state.world.sblock.push(new_sblock);
+
+        let new_sblock_position = Point::new(575.0, 575.0);
+        let new_sblock = SBlock::new(new_sblock_position);
+        self.state.world.sblock.push(new_sblock);
     }
 
     pub fn check_bomb_exist(&mut self, x: f64, y: f64) -> bool {
@@ -255,6 +379,9 @@ impl GameData {
             draw.draw_wall(wall.position.x, wall.position.y);
         }
 
+        for sblock in &self.state.world.sblock {
+            draw.draw_sblock(sblock.position.x, sblock.position.y);
+        }
         for bombs in &self.state.world.bomb {
             for bomb in bombs {
                 draw.draw_bomb(bomb.position.x, bomb.position.y);
@@ -304,4 +431,6 @@ extern "C" {
     #[wasm_bindgen(method)]
     pub fn draw_fire(this: &Draw, _: c_double, _: c_double);
 
+    #[wasm_bindgen(method)]
+    pub fn draw_sblock(this: &Draw, _: c_double, _: c_double);
 }

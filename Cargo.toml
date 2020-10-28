@@ -13,7 +13,7 @@ default = ["console_error_panic_hook"]
 [dependencies]
 wasm-bindgen = "0.2"
 itertools-num = "0.1.1"
-rand = "0.3.18"
+rand = {version = "0.6.1", features = ["wasm-bindgen"]}
 pcg_rand = "0.7.1"
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires

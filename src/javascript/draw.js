@@ -1,15 +1,16 @@
 // We create this here because it will be used from within `imports`
 const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext("2d");
+let ctx = canvas.getContext("2d");
 
 
 // Returns an object containing resources that will be used later for drawing
 function resources() {
     let res = {
-        player: document.createElement('canvas'),
+        player: document.createElement('img'),
         //	enemy: document.createElement('canvas'),
         //	bullet: document.createElement('canvas'),
         particle: document.createElement('canvas'),
+        sblock: document.createElement('canvas'),
         wall: document.createElement('canvas'),
         bomb: document.createElement('canvas'),
         fire: document.createElement('canvas'),
@@ -18,11 +19,24 @@ function resources() {
     // Player
     res.player.width = 50;
     res.player.height = 50;
-    let plCtx = res.player.getContext('2d');
-    plCtx.fillStyle = "red";
-    plCtx.beginPath();
-    plCtx.arc(25, 25, 25, 0, 2 * Math.PI);
-    plCtx.fill();
+    res.player.src = "/player.png";
+
+//    res.player.width = 50;
+//    res.player.height = 50;
+
+//    let plCtx = res.player.getContext('2d');
+//    plCtx.fillStyle = "red";
+//    plCtx.beginPath();
+//    plCtx.arc(25, 25, 25, 0, 2 * Math.PI);
+//    plCtx.fill();
+
+    // SBlock
+    res.sblock.width = 50;
+    res.sblock.height = 50;
+    let sblockCtx = res.sblock.getContext('2d');
+    sblockCtx.fillStyle = "orange";
+    sblockCtx.beginPath();
+    sblockCtx.fillRect(0, 0, res.sblock.width, res.sblock.height);
 
     // Wall
     res.wall.width = 50;
@@ -41,7 +55,7 @@ function resources() {
     bombCtx.arc(25, 25, 25, 0, 2 * Math.PI);
     bombCtx.fill();
 
-    // Bomb
+    // Fire
     res.fire.width = 50;
     res.fire.height = 50;
     let fireCtx = res.fire.getContext('2d');
@@ -61,14 +75,12 @@ export class Draw {
     width(x) {
         //        canvas.width = window.innerWidth * 0.8;
         canvas.width = x;
-        console.log(canvas.width);
         return canvas.width;
     }
 
     height(y) {
         //        canvas.height = window.innerHeight * 0.8;
         canvas.height = y;
-        console.log(canvas.height);
         return canvas.height;
     }
 
@@ -81,12 +93,24 @@ export class Draw {
         if (!alive) {
             return;
         }
-        ctx.translate(x-25, y-25);
-        ctx.drawImage(res.player, 0, 0);
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.translate(-25, -25);
+        ctx.drawImage(res.player, 0, 0, 50, 50);
+//        ctx.rotate(angle);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.fillStyle = "black";  
     }
 
+    draw_sblock(x, y) {
+        console.log(x);
+        console.log(y);
+        ctx.translate(x-25, y-25);
+        ctx.drawImage(res.sblock, 0, 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";  
+    }
+    
     draw_wall(x, y) {
         ctx.translate(x-25, y-25);
         ctx.drawImage(res.wall, 0, 0);
@@ -104,8 +128,9 @@ export class Draw {
         ctx.translate(x-25, y-25);
         ctx.drawImage(res.fire, 0, 0);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = "black";  
+        ctx.fillStyle = "black";
     }
+
 
     // The real loading and running of our wasm starts here
     //let imports = { clear_screen, draw_player, draw_enemy, draw_bullet, draw_particle, draw_score };
