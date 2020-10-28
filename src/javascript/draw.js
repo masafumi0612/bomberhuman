@@ -11,6 +11,8 @@ function resources() {
         //	bullet: document.createElement('canvas'),
         particle: document.createElement('canvas'),
         wall: document.createElement('canvas'),
+        bomb: document.createElement('canvas'),
+        fire: document.createElement('canvas'),
     }
 
     // Player
@@ -20,7 +22,6 @@ function resources() {
     plCtx.fillStyle = "red";
     plCtx.beginPath();
     plCtx.arc(25, 25, 25, 0, 2 * Math.PI);
-
     plCtx.fill();
 
     // Wall
@@ -31,6 +32,24 @@ function resources() {
     wallCtx.beginPath();
     wallCtx.fillRect(0, 0, res.wall.width, res.wall.height);
     
+    // Bomb
+    res.bomb.width = 50;
+    res.bomb.height = 50;
+    let bombCtx = res.bomb.getContext('2d');
+    bombCtx.fillStyle = "green";
+    bombCtx.beginPath();
+    bombCtx.arc(25, 25, 25, 0, 2 * Math.PI);
+    bombCtx.fill();
+
+    // Bomb
+    res.fire.width = 50;
+    res.fire.height = 50;
+    let fireCtx = res.fire.getContext('2d');
+    fireCtx.fillStyle = "yellow";
+    fireCtx.beginPath();
+    fireCtx.arc(25, 25, 25, 0, 2 * Math.PI);
+    fireCtx.fill();
+
     return res;
 }
 
@@ -72,6 +91,18 @@ export class Draw {
         ctx.fillStyle = "black";  
     }
     
+    draw_bomb(x, y) {
+        ctx.translate(x-25, y-25);
+        ctx.drawImage(res.bomb, 0, 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";  
+    }
+    draw_fire(x, y) {
+        ctx.translate(x-25, y-25);
+        ctx.drawImage(res.fire, 0, 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";  
+    }
 
     // The real loading and running of our wasm starts here
     //let imports = { clear_screen, draw_player, draw_enemy, draw_bullet, draw_particle, draw_score };

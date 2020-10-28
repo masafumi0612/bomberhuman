@@ -19,6 +19,9 @@ function processKey(key, b) {
     case "ArrowDown":
 	gamedata.toggle_down(b, 0);
     break;
+    case " ":
+    gamedata.put_bomb(b, 0);
+    break;
 
     case "a":
     gamedata.toggle_left(b, 1);
@@ -31,6 +34,9 @@ function processKey(key, b) {
     break;
     case "s":
     gamedata.toggle_down(b, 1);
+    break;
+    case "x":
+    gamedata.put_bomb(b, 1);
     break;
 
     case "f":
@@ -115,7 +121,7 @@ for(i = 0; i < num_player; i = i + 1){
 }
 */
 gamedata.create_player(175,175);
-gamedata.create_player(525,525);
+gamedata.create_player(575,525);
 
 gamedata.create_wall();
 

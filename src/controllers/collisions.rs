@@ -9,8 +9,10 @@ use std::f64;
 pub struct CollisionsController;
 
 impl CollisionsController {
-    pub fn handle_collisions(state: &mut GameState, num_player: usize, grid: f64) {
+    pub fn player_collisions(state: &mut GameState, num_player: usize, grid: f64) {
         CollisionsController::player_walls_collision(state, num_player, grid);
+        CollisionsController::player_bombs_collision(state, num_player, grid);
+        CollisionsController::player_bombs_collision(state, num_player, grid);
 //        CollisionsController::handle_bullet_collisions(state);
 //        CollisionsController::handle_player_collisions(state);
     }
@@ -20,46 +22,102 @@ impl CollisionsController {
     // When an enemy is reached by a bullet, both the enemy and the bullet
     // will be removed. Additionally, the score of the player will be increased.
 
-    fn player_walls_collision(state: &mut GameState, num_player: usize, grid: f64){
+    pub fn player_walls_collision(state: &mut GameState, num_player: usize, grid: f64){
         let mut flag: bool = false;
         for wall in &state.world.wall
         {
             let mut x_distance = state.world.player[num_player].vector.position.x - wall.position.x;
             let mut y_distance = state.world.player[num_player].vector.position.y - wall.position.y;
-            let mut distance = (x_distance * x_distance + y_distance * y_distance).sqrt();
-            if x_distance < grid && x_distance >= 0.0 {
-                if y_distance < grid && y_distance >= 0.0 {
-                    if x_distance.abs() > y_distance.abs() {
-                        state.world.player[num_player].vector.position.x = wall.position.x + grid;
-                    } else {
+            if x_distance < grid && x_distance >= 0.0 && state.world.actions[num_player].left {
+                if y_distance.abs() <= grid / 2.0 {
+                    state.world.player[num_player].vector.position.x = wall.position.x + grid;
+                }else if grid / 2.0 < y_distance && y_distance < grid{
+                    state.world.player[num_player].vector.position.x = wall.position.x + grid;
+                    state.world.player[num_player].vector.position.y -= x_distance - grid;
+                    if state.world.player[num_player].vector.position.y > wall.position.y + grid {
                         state.world.player[num_player].vector.position.y = wall.position.y + grid;
                     }
-                } else if y_distance < 0.0 && y_distance > -grid {
-                    if x_distance.abs() > y_distance.abs() {
-                        state.world.player[num_player].vector.position.x = wall.position.x + grid;
-                    } else {
+                }else if grid / 2.0 < -y_distance && -y_distance < grid{
+                    state.world.player[num_player].vector.position.x = wall.position.x + grid;
+                    state.world.player[num_player].vector.position.y += x_distance - grid;
+                    if state.world.player[num_player].vector.position.y < wall.position.y - grid {
                         state.world.player[num_player].vector.position.y = wall.position.y - grid;
+                    }                
+                } 
+            }else if x_distance < 0.0 && x_distance > -grid  && state.world.actions[num_player].right {
+                if y_distance.abs() <= grid / 2.0 {
+                    state.world.player[num_player].vector.position.x = wall.position.x - grid;
+                }else if grid / 2.0 < y_distance && y_distance < grid {
+                    state.world.player[num_player].vector.position.x = wall.position.x - grid;
+                    state.world.player[num_player].vector.position.y += x_distance + grid;
+                    if state.world.player[num_player].vector.position.y > wall.position.y + grid {
+                        state.world.player[num_player].vector.position.y = wall.position.y + grid;
                     }
+                }else if grid / 2.0 < -y_distance && -y_distance < grid {
+                    state.world.player[num_player].vector.position.x = wall.position.x - grid;
+                    state.world.player[num_player].vector.position.y -= x_distance + grid;
+                    if state.world.player[num_player].vector.position.y < wall.position.y - grid {
+                        state.world.player[num_player].vector.position.y = wall.position.y - grid;
+                    }                
                 }
-            } else if x_distance < 0.0 && x_distance > -grid {
-                if y_distance < grid && y_distance >= 0.0 {
-                    if x_distance.abs() > y_distance.abs() {
-                        state.world.player[num_player].vector.position.x = wall.position.x - grid;
-                    } else {
-                        state.world.player[num_player].vector.position.y = wall.position.y + grid;
+            }else if y_distance < grid && y_distance >= 0.0 && state.world.actions[num_player].up {
+                if x_distance.abs() <= grid / 2.0 {
+                    state.world.player[num_player].vector.position.y = wall.position.y + grid;
+                }else if grid / 2.0 < x_distance && x_distance < grid {
+                    state.world.player[num_player].vector.position.y = wall.position.y + grid;
+                    state.world.player[num_player].vector.position.x -= y_distance - grid;
+                    if state.world.player[num_player].vector.position.x > wall.position.x + grid {
+                        state.world.player[num_player].vector.position.x = wall.position.x + grid;
                     }
-                } else if y_distance < 0.0 && y_distance > -grid {
-                    if x_distance.abs() > y_distance.abs() {
+                }else if grid / 2.0 < -x_distance && -x_distance < grid{
+                    state.world.player[num_player].vector.position.y = wall.position.y + grid;
+                    state.world.player[num_player].vector.position.x += y_distance - grid;
+                    if state.world.player[num_player].vector.position.x < wall.position.x - grid {
                         state.world.player[num_player].vector.position.x = wall.position.x - grid;
-                    } else {
-                        state.world.player[num_player].vector.position.y = wall.position.y - grid;
+                    }                
+                }
+            }else if y_distance < 0.0 && y_distance > -grid && state.world.actions[num_player].down {
+                if x_distance.abs() <= grid / 2.0 {
+                    state.world.player[num_player].vector.position.y = wall.position.y - grid;
+                }else if grid / 2.0 < x_distance && x_distance < grid {
+                    state.world.player[num_player].vector.position.y = wall.position.y - grid;
+                    state.world.player[num_player].vector.position.x += y_distance + grid;
+                    if state.world.player[num_player].vector.position.x > wall.position.x + grid {
+                        state.world.player[num_player].vector.position.x = wall.position.x + grid;
                     }
+                }else if grid / 2.0 < -x_distance && -x_distance < grid {
+                    state.world.player[num_player].vector.position.y = wall.position.y - grid;
+                    state.world.player[num_player].vector.position.x -= y_distance + grid;
+                    if state.world.player[num_player].vector.position.x < wall.position.x - grid {
+                        state.world.player[num_player].vector.position.x = wall.position.x - grid;
+                    }      
                 }
             }
-
-        
         }
     }
+
+    pub fn player_bombs_collision(state: &mut GameState, num_player: usize, grid: f64){
+        for bombs in &state.world.bomb {
+            for bomb in bombs {
+                let mut x_distance = state.world.player[num_player].vector.position.x - bomb.position.x;
+                let mut y_distance = state.world.player[num_player].vector.position.y - bomb.position.y;
+                if grid - state.world.player[num_player].speed / 20.0 < x_distance && x_distance < grid && y_distance.abs() < grid / 2.0 && state.world.actions[num_player].left {
+                    state.world.player[num_player].vector.position.x = bomb.position.x + grid;
+                }else if grid > -x_distance && -x_distance > grid - state.world.player[num_player].speed / 20.0 && y_distance.abs() < grid / 2.0 && state.world.actions[num_player].right {
+                    state.world.player[num_player].vector.position.x = bomb.position.x - grid;
+                }else if grid - state.world.player[num_player].speed / 20.0 < y_distance && y_distance < grid && x_distance.abs() < grid / 2.0 && state.world.actions[num_player].up {
+                    state.world.player[num_player].vector.position.y = bomb.position.y + grid;
+                }else if grid > -y_distance && -y_distance > grid - state.world.player[num_player].speed / 20.0 && x_distance.abs() < grid / 2.0 && state.world.actions[num_player].down {
+                    state.world.player[num_player].vector.position.y = bomb.position.y - grid;
+                }
+            }
+        }
+    }
+/*    
+    pub fn player_bombs_collision(state: &mut GameState, grid: f64){
+        
+    }
+*/
 
 /*
     fn handle_bullet_collisions(state: &mut GameState) {

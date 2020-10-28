@@ -4,10 +4,10 @@ use rand::SeedableRng;
 use rand::Rng;
 use std::f64;
 
-use crate::models::World;
-
+use crate::models::{Bomb, Fire, World};
 use crate::geometry::{Advance, Position, Size};
 use crate::controllers::CollisionsController;
+
 
 //use crate::util;
 const GRID: f64 = 50.0;
@@ -28,10 +28,10 @@ impl GameState {
         }
     }
 
-        /// Updates the game
+    /// Updates the game
     ///
     /// `dt` is the amount of seconds that have passed since the last update
-    pub fn update_seconds(state: &mut GameState, dt: f64, num_player: usize) {
+    pub fn move_player(state: &mut GameState, dt: f64, num_player: usize) {
         state.current_time += dt;
         // Update rocket rotation
 
@@ -66,9 +66,28 @@ impl GameState {
         }else {
             0.0
         };
-
-//        let speed:f64 = 0.0;
         state.world.player[num_player].advance_wrapping(dt * speed, state.world.size);
     }
+
+    pub fn update_bomb_ttl(bombs: &mut Vec<Bomb>, dt: f64) {
+        for bomb in bombs {
+            bomb.ttl -= dt;
+        }
+    }
+
+    pub fn update_fire_ttl(fires: &mut Vec<Fire>, dt: f64) {
+        for fire in fires {
+            fire.ttl -= dt;
+        }
+    }
+
+    pub fn delete_bomb(bombs: &mut Vec<Bomb>) {
+        bombs.retain(|bomb| bomb.ttl > 0.0);
+    }
+
+    pub fn delete_fire(fires: &mut Vec<Fire>) {
+        fires.retain(|fire| fire.ttl > 0.0);
+    }
+
 }
 
