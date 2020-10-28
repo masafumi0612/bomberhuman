@@ -77,7 +77,10 @@ export class Draw {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    draw_player(x, y, angle) {
+    draw_player(x, y, angle, alive) {
+        if (!alive) {
+            return;
+        }
         ctx.translate(x-25, y-25);
         ctx.drawImage(res.player, 0, 0);
         ctx.setTransform(1, 0, 0, 1, 0, 0);

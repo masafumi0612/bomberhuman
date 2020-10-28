@@ -55,13 +55,14 @@ impl GameData {
     }
 
     pub fn create_player(&mut self, x: f64, y: f64) {
+        let new_player_alive: bool = true;
         let new_player_position = Point::new(x, y);
         let new_player_vector = Vector::new(new_player_position, 0.0);
         let new_player_speed = PLAYER_SIZE_SPEED;
         let new_player_bomb_power: usize = BOMB_POWER;
         let new_player_bomb_num: usize = BOMB_NUM;
 
-        let new_player = Player::new(new_player_vector, new_player_speed, new_player_bomb_power, new_player_bomb_num);
+        let new_player = Player::new(new_player_alive, new_player_vector, new_player_speed, new_player_bomb_power, new_player_bomb_num);
         self.state.world.player.push(new_player);
         self.state.world.bomb.push(Vec::new());
         self.state.world.actions.push(Actions::default());
@@ -122,23 +123,25 @@ impl GameData {
     }
 
     pub fn create_bomb(&mut self, num_player: usize) {
-        if self.state.world.actions[num_player].put_bomb && self.state.world.player[num_player].bomb_num > self.state.world.bomb[num_player].len() {
-            let new_bomb_position_x = 
-                self.state.world.player[num_player].vector.position.x
-                - self.state.world.player[num_player].vector.position.x % GRID 
-                + GRID / 2.0;
-            let new_bomb_position_y = 
-                self.state.world.player[num_player].vector.position.y
-                - self.state.world.player[num_player].vector.position.y % GRID
+        if self.state.world.player[num_player].alive {
+            if self.state.world.actions[num_player].put_bomb && self.state.world.player[num_player].bomb_num > self.state.world.bomb[num_player].len() {
+                let new_bomb_position_x = 
+                    self.state.world.player[num_player].vector.position.x
+                    - self.state.world.player[num_player].vector.position.x % GRID 
                     + GRID / 2.0;
-            if self.check_bomb_exist(new_bomb_position_x, new_bomb_position_y) == true {
-                return;
+                let new_bomb_position_y = 
+                    self.state.world.player[num_player].vector.position.y
+                    - self.state.world.player[num_player].vector.position.y % GRID
+                        + GRID / 2.0;
+                if self.check_bomb_exist(new_bomb_position_x, new_bomb_position_y) == true {
+                    return;
+                }
+                let new_bomb_position = Point::new(new_bomb_position_x, new_bomb_position_y);
+                let new_bomb_power = self.state.world.player[num_player].bomb_power;
+                let new_bomb_ttl: c_double = BOMB_TTL;
+                let new_bomb = Bomb::new(new_bomb_ttl, new_bomb_power, new_bomb_position);
+                self.state.world.bomb[num_player].push(new_bomb);
             }
-            let new_bomb_position = Point::new(new_bomb_position_x, new_bomb_position_y);
-            let new_bomb_power = self.state.world.player[num_player].bomb_power;
-            let new_bomb_ttl: c_double = BOMB_TTL;
-            let new_bomb = Bomb::new(new_bomb_ttl, new_bomb_power, new_bomb_position);
-            self.state.world.bomb[num_player].push(new_bomb);
         }
     }
 
@@ -149,14 +152,20 @@ impl GameData {
             if bomb.ttl <= 0.0 {
                 x = -1.0;
                 while -x <= bomb.power as f64 {
+                    if CollisionsController::fire_walls_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
+                        break;
+                    }
                     let new_fire_position = Point::new(bomb.position.x + GRID * x, bomb.position.y + GRID * y);
                     let new_fire_ttl: c_double = FIRE_TTL;
                     let new_fire = Fire::new(new_fire_ttl, new_fire_position);
-                    self.state.world.fire.push(new_fire);    
+                    self.state.world.fire.push(new_fire);
                     x -= 1.0;
                 }
                 x = 1.0;
                 while x <= bomb.power as f64 {
+                    if CollisionsController::fire_walls_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
+                        break;
+                    }
                     let new_fire_position = Point::new(bomb.position.x + GRID * x, bomb.position.y + GRID * y);
                     let new_fire_ttl: c_double = FIRE_TTL;
                     let new_fire = Fire::new(new_fire_ttl, new_fire_position);
@@ -166,6 +175,9 @@ impl GameData {
                 x = 0.0;
                 y = -1.0;
                 while -y <= bomb.power as f64 {
+                    if CollisionsController::fire_walls_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
+                        break;
+                    }
                     let new_fire_position = Point::new(bomb.position.x + GRID * x, bomb.position.y + GRID * y);
                     let new_fire_ttl: c_double = FIRE_TTL;
                     let new_fire = Fire::new(new_fire_ttl, new_fire_position);
@@ -174,13 +186,15 @@ impl GameData {
                 }                
                 y = 1.0;
                 while y <= bomb.power as f64{
+                    if CollisionsController::fire_walls_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
+                        break;
+                    }
                     let new_fire_position = Point::new(bomb.position.x + GRID * x, bomb.position.y + GRID * y);
                     let new_fire_ttl: c_double = FIRE_TTL;
                     let new_fire = Fire::new(new_fire_ttl, new_fire_position);
                     self.state.world.fire.push(new_fire);    
                     y += 1.0;
                 }    
-
                 let new_fire_position = Point::new(bomb.position.x, bomb.position.y);
                 let new_fire_ttl: c_double = FIRE_TTL;
                 let new_fire = Fire::new(new_fire_ttl, new_fire_position);
@@ -201,6 +215,7 @@ impl GameData {
             CollisionsController::player_collisions(&mut self.state, i, GRID);
             GameState::delete_bomb(&mut self.state.world.bomb[i]);           
             GameState::delete_fire(&mut self.state.world.fire);
+            CollisionsController::bomb_fire_collision(&mut self.state);
             i =  i + 1;
         }
     }
@@ -251,7 +266,7 @@ impl GameData {
         }
 
         for player in &self.state.world.player {
-            draw.draw_player(player.x(), player.y(), player.direction());
+            draw.draw_player(player.x(), player.y(), player.direction(), player.alive);
         }
     }
 }
@@ -278,7 +293,7 @@ extern "C" {
     pub fn clear_screen(this: &Draw);
 
     #[wasm_bindgen(method)]
-    pub fn draw_player(this: &Draw, _: c_double, _: c_double, _: c_double);
+    pub fn draw_player(this: &Draw, _: c_double, _: c_double, _: c_double, _: bool);
 
     #[wasm_bindgen(method)]
     pub fn draw_wall(this: &Draw, _: c_double, _: c_double);

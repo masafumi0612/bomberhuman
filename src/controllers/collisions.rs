@@ -12,7 +12,7 @@ impl CollisionsController {
     pub fn player_collisions(state: &mut GameState, num_player: usize, grid: f64) {
         CollisionsController::player_walls_collision(state, num_player, grid);
         CollisionsController::player_bombs_collision(state, num_player, grid);
-        CollisionsController::player_bombs_collision(state, num_player, grid);
+        CollisionsController::player_fires_collision(state, num_player, grid);
 //        CollisionsController::handle_bullet_collisions(state);
 //        CollisionsController::handle_player_collisions(state);
     }
@@ -113,12 +113,50 @@ impl CollisionsController {
             }
         }
     }
+
+    pub fn player_fires_collision(state: &mut GameState, num_player: usize, grid: f64) {
+        for fire in &state.world.fire {
+            let x_distance = state.world.player[num_player].vector.position.x - fire.position.x;
+            let y_distance = state.world.player[num_player].vector.position.y - fire.position.y;
+            if x_distance.abs() < grid && y_distance.abs() < grid / 2.0 {
+                state.world.player[num_player].alive = false;
+                break;
+            }
+            if y_distance.abs() < grid && x_distance.abs() < grid / 2.0 {
+                state.world.player[num_player].alive = false;
+                break;
+            }            
+        }
+    }
+
 /*    
     pub fn player_bombs_collision(state: &mut GameState, grid: f64){
         
     }
 */
 
+    pub fn fire_walls_collision(state: &GameState, fire_position_x: f64, fire_position_y: f64)-> bool {
+        let mut fire_wall_collision_flag: bool = false;
+        for wall in &state.world.wall {
+            if fire_position_x == wall.position.x && fire_position_y == wall.position.y {
+                fire_wall_collision_flag = true;
+                break;
+            }
+        }
+        fire_wall_collision_flag
+    }
+
+    pub fn bomb_fire_collision(state: &mut GameState) {
+        for bombs in &mut state.world.bomb {
+            for bomb in bombs {
+                for fire in &state.world.fire {
+                    if bomb.position.x == fire.position.x && bomb.position.y == fire.position.y {
+                        bomb.ttl = 0.0000001;
+                    }
+                }
+            }
+        }
+    }
 /*
     fn handle_bullet_collisions(state: &mut GameState) {
         let old_enemy_count = state.world.enemies.len();

@@ -7,6 +7,7 @@ use crate::geometry::{Point};
 /// The `Player` is the rocket controlled by the user
 #[derive(Default)]
 pub struct Player {
+    pub alive: bool,
     pub vector: Vector,
     pub speed: f64,
     pub bomb_power: usize,
@@ -17,8 +18,9 @@ derive_position_direction!(Player);
 
 impl Player {
     ///Create a new `Player`
-    pub fn new(vector: Vector, player_speed: f64, bomb_power: usize, bomb_num: usize) -> Player {
+    pub fn new(alive: bool, vector: Vector, player_speed: f64, bomb_power: usize, bomb_num: usize) -> Player {
         Player {
+            alive: alive,
             vector: vector, 
             speed: player_speed,
             bomb_power: bomb_power,
