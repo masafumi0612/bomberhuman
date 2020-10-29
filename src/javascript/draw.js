@@ -19,7 +19,7 @@ function resources() {
     // Player
     res.player.width = 50;
     res.player.height = 50;
-    res.player.src = "/player.png";
+    res.player.src = "image/player.png";
 
 //    res.player.width = 50;
 //    res.player.height = 50;
