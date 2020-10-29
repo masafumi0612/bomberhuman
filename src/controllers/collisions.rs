@@ -11,6 +11,7 @@ pub struct CollisionsController;
 impl CollisionsController {
     pub fn player_collisions(state: &mut GameState, num_player: usize, grid: f64) {
         CollisionsController::player_walls_collision(state, num_player, grid);
+        CollisionsController::player_sblocks_collision(state, num_player, grid);
         CollisionsController::player_bombs_collision(state, num_player, grid);
         CollisionsController::player_fires_collision(state, num_player, grid);
 //        CollisionsController::handle_bullet_collisions(state);
@@ -96,6 +97,22 @@ impl CollisionsController {
         }
     }
 
+    pub fn player_sblocks_collision(state: &mut GameState, num_player: usize, grid: f64){
+        for sblock in &state.world.sblock {
+            let mut x_distance = state.world.player[num_player].vector.position.x - sblock.position.x;
+            let mut y_distance = state.world.player[num_player].vector.position.y - sblock.position.y;
+            if 0.0 < x_distance && x_distance < grid && y_distance.abs() < grid / 2.0 {
+                state.world.player[num_player].vector.position.x = sblock.position.x + grid;
+            }else if grid > -x_distance && -x_distance > 0.0 && y_distance.abs() < grid / 2.0 {
+                state.world.player[num_player].vector.position.x = sblock.position.x - grid;
+            }else if 0.0 < y_distance && y_distance < grid && x_distance.abs() < grid / 2.0 {
+                state.world.player[num_player].vector.position.y = sblock.position.y + grid;
+            }else if grid > -y_distance && -y_distance > 0.0 && x_distance.abs() < grid / 2.0 {
+                state.world.player[num_player].vector.position.y = sblock.position.y - grid;
+            }
+        }
+    }
+
     pub fn player_bombs_collision(state: &mut GameState, num_player: usize, grid: f64){
         for bombs in &state.world.bomb {
             for bomb in bombs {
@@ -129,12 +146,6 @@ impl CollisionsController {
         }
     }
 
-/*    
-    pub fn player_bombs_collision(state: &mut GameState, grid: f64){
-        
-    }
-*/
-
     pub fn fire_walls_collision(state: &GameState, fire_position_x: f64, fire_position_y: f64)-> bool {
         let mut fire_wall_collision_flag: bool = false;
         for wall in &state.world.wall {
@@ -144,6 +155,20 @@ impl CollisionsController {
             }
         }
         fire_wall_collision_flag
+    }
+
+    pub fn fire_sblocks_collision(state: &GameState, fire_position_x: f64, fire_position_y: f64, sblock_fire_collision_id: &mut Vec<usize>)-> bool {
+        let mut fire_sblock_collision_flag: bool = false;
+        let mut sblock_id: usize = 0;
+        for sblock in &state.world.sblock {
+            if fire_position_x == sblock.position.x && fire_position_y == sblock.position.y {
+                fire_sblock_collision_flag = true;
+                sblock_fire_collision_id.push(sblock_id);
+                break;
+            }
+            sblock_id += 1;
+        }
+        fire_sblock_collision_flag
     }
 
     pub fn bomb_fire_collision(state: &mut GameState) {
