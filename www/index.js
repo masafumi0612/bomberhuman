@@ -51,6 +51,9 @@ function processKey(key, b) {
     case "g":
     gamedata.toggle_down(b, 2);
     break;
+    case "b":
+    gamedata.put_bomb(b, 2);
+    break;
 
     case "j":
     gamedata.toggle_left(b, 3);
@@ -63,6 +66,9 @@ function processKey(key, b) {
     break;
     case "k":
     gamedata.toggle_down(b, 3);
+    break;
+    case "b":
+    gamedata.put_bomb(b, 3);
     break;
     } 
 }
@@ -121,7 +127,10 @@ for(i = 0; i < num_player; i = i + 1){
 }
 */
 gamedata.create_player(75,75);
+gamedata.create_player(675,75);
+gamedata.create_player(75,575);
 gamedata.create_player(675,575);
+
 
 gamedata.create_wall();
 gamedata.create_sblock();
