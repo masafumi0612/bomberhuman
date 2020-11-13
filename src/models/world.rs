@@ -1,7 +1,7 @@
 use rand::Rng;
 
 use crate::geometry::Size;
-use crate::models::{Bomb, Fire, Player, SBlock, Wall};
+use crate::models::{Bomb, Fire, Player, Pow, SBlock, Wall};
 use crate::controllers::Actions;
 
 /// A model that contains the other models and renders them
@@ -11,6 +11,7 @@ pub struct World {
     pub bomb: Vec<Vec<Bomb>>,
     pub fire: Vec<Fire>,
     pub sblock: Vec<SBlock>,
+    pub pow: Vec<Pow>,
     pub actions: Vec<Actions>,
     pub size: Size,
 }
@@ -24,6 +25,7 @@ impl World {
             bomb: vec![vec![]],
             fire: vec![],
             sblock: vec![],
+            pow: vec![],
             actions: vec![],
             size: size,
         }

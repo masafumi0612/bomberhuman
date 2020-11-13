@@ -14,7 +14,7 @@ use rand::Rng;
 use std::f64;
 use std::os::raw::{c_double, c_int};
 
-use self::models::{Bomb, Fire, Player, SBlock, Wall, Vector};
+use self::models::{Bomb, Fire, Player, Pow, SBlock, Wall, Vector};
 use self::controllers::{Actions, CollisionsController};
 use self::game_state::GameState;
 use self::geometry::{Point, Size};
@@ -33,8 +33,8 @@ const PLAYER_SIZE_HEIGHT: f64 = 50.0;
 const PLAYER_SIZE_SPEED: f64 = 100.0;
 const BOMB_TTL: c_double = 3.0;
 const BOMB_POWER: usize = 1;
-const BOMB_NUM: usize = 3; 
-const FIRE_TTL: c_double = 0.8;
+const BOMB_NUM: usize = 1; 
+const FIRE_TTL: c_double = 1.0;
 const WALL_SIZE_WIDTH: f64 = 50.0;
 const WALL_SIZE_HEIGHT: f64 = 50.0;
 const GRID: f64 = 50.0;
@@ -234,6 +234,18 @@ impl GameData {
         self.state.world.sblock.push(new_sblock);
     }
 
+    pub fn create_pow(&mut self) {
+        for i in 0..self.state.world.sblock.len() {
+            let secret_number = rand::thread_rng().gen_range(0, 100);
+            if secret_number <= 50 {
+                let new_pow_content = rand::thread_rng().gen_range(0, 3);
+                let new_pow_position = Point::new(self.state.world.sblock[i].position.x, self.state.world.sblock[i].position.y);
+                let new_pow = Pow::new(new_pow_content, new_pow_position);
+                self.state.world.pow.push(new_pow);
+            }
+        }
+    }
+
     pub fn check_bomb_exist(&mut self, x: f64, y: f64) -> bool {
         let mut exist_flag: bool = false;
         for bombs in &self.state.world.bomb {
@@ -280,7 +292,7 @@ impl GameData {
                     if CollisionsController::fire_walls_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
                         break;
                     }
-                    if CollisionsController::fire_sblocks_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y, &mut sblock_fire_collision_id) {
+                    if CollisionsController::fire_sblocks_collision(&mut self.state.world.sblock, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
                         break;
                     }
                     let new_fire_position = Point::new(bomb.position.x + GRID * x, bomb.position.y + GRID * y);
@@ -294,7 +306,7 @@ impl GameData {
                     if CollisionsController::fire_walls_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
                         break;
                     }
-                    if CollisionsController::fire_sblocks_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y, &mut sblock_fire_collision_id) {
+                    if CollisionsController::fire_sblocks_collision(&mut self.state.world.sblock, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
                         break;
                     }
                     let new_fire_position = Point::new(bomb.position.x + GRID * x, bomb.position.y + GRID * y);
@@ -309,7 +321,7 @@ impl GameData {
                     if CollisionsController::fire_walls_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
                         break;
                     }
-                    if CollisionsController::fire_sblocks_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y, &mut sblock_fire_collision_id) {
+                    if CollisionsController::fire_sblocks_collision(&mut self.state.world.sblock, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
                         break;
                     }
                     let new_fire_position = Point::new(bomb.position.x + GRID * x, bomb.position.y + GRID * y);
@@ -323,7 +335,7 @@ impl GameData {
                     if CollisionsController::fire_walls_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
                         break;
                     }
-                    if CollisionsController::fire_sblocks_collision(&self.state, bomb.position.x + GRID * x, bomb.position.y + GRID * y, &mut sblock_fire_collision_id) {
+                    if CollisionsController::fire_sblocks_collision(&mut self.state.world.sblock, bomb.position.x + GRID * x, bomb.position.y + GRID * y) {
                         break;
                     }
                     let new_fire_position = Point::new(bomb.position.x + GRID * x, bomb.position.y + GRID * y);
@@ -394,10 +406,17 @@ impl GameData {
         for wall in &self.state.world.wall {
             draw.draw_wall(wall.position.x, wall.position.y);
         }
+   
+        for pow in &self.state.world.pow {
+            if pow.whose == 100 {
+                draw.draw_pow(pow.position.x, pow.position.y, pow.content);
+            }
+        }
 
         for sblock in &self.state.world.sblock {
             draw.draw_sblock(sblock.position.x, sblock.position.y);
         }
+
         for bombs in &self.state.world.bomb {
             for bomb in bombs {
                 draw.draw_bomb(bomb.position.x, bomb.position.y);
@@ -446,6 +465,9 @@ extern "C" {
 
     #[wasm_bindgen(method)]
     pub fn draw_fire(this: &Draw, _: c_double, _: c_double);
+
+    #[wasm_bindgen(method)]
+    pub fn draw_pow(this: &Draw, _: c_double, _: c_double, _: usize);
 
     #[wasm_bindgen(method)]
     pub fn draw_sblock(this: &Draw, _: c_double, _: c_double);

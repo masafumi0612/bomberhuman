@@ -116,24 +116,14 @@ let drawAndUpdate = (timestamp) => {
     prevTimestamp = timestamp;
     requestAnimationFrame(drawAndUpdate);
 };
-/*
-let i = 0;
-let player_x = 300;
-let player_y = 200;
-for(i = 0; i < num_player; i = i + 1){
-    gamedata.create_player(player_x, player_y);
-    player_x = player_x + 100;
-    player_y = player_y + 100;
-}
-*/
 gamedata.create_player(75,75);
 gamedata.create_player(675,75);
 gamedata.create_player(75,575);
 gamedata.create_player(675,575);
 
-
 gamedata.create_wall();
 gamedata.create_sblock();
+gamedata.create_pow();
 
 drawAndUpdate();
 //});

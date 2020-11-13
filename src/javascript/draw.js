@@ -9,7 +9,8 @@ function resources() {
         player: document.createElement('img'),
         //	enemy: document.createElement('canvas'),
         //	bullet: document.createElement('canvas'),
-        particle: document.createElement('canvas'),
+        //particle: document.createElement('canvas'),
+        pow: document.createElement('canvas'),
         sblock: document.createElement('canvas'),
         wall: document.createElement('canvas'),
         bomb: document.createElement('canvas'),
@@ -30,9 +31,18 @@ function resources() {
 //    plCtx.arc(25, 25, 25, 0, 2 * Math.PI);
 //    plCtx.fill();
 
+    // Pow
+    res.pow.width = 50;
+    res.pow.height = 50;
+    let powCtx = res.pow.getContext('2d');
+    powCtx.fillStyle = "red";
+    powCtx.beginPath();
+    powCtx.arc(25, 25, 25, 0, 2 * Math.PI);
+    powCtx.fill();
+
     // SBlock
-    res.sblock.width = 50;
-    res.sblock.height = 50;
+    res.sblock.width = 30;
+    res.sblock.height = 30;
     let sblockCtx = res.sblock.getContext('2d');
     sblockCtx.fillStyle = "orange";
     sblockCtx.beginPath();
@@ -102,9 +112,14 @@ export class Draw {
         ctx.fillStyle = "black";  
     }
 
+    draw_pow(x, y, contnet) {
+        ctx.translate(x-25, y-25);
+        ctx.drawImage(res.pow, 0, 0);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";  
+    }
+
     draw_sblock(x, y) {
-        console.log(x);
-        console.log(y);
         ctx.translate(x-25, y-25);
         ctx.drawImage(res.sblock, 0, 0);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -115,7 +130,7 @@ export class Draw {
         ctx.translate(x-25, y-25);
         ctx.drawImage(res.wall, 0, 0);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = "black";  
+        ctx.fillStyle = "black";
     }
     
     draw_bomb(x, y) {
