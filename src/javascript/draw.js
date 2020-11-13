@@ -11,10 +11,10 @@ function resources() {
         //	bullet: document.createElement('canvas'),
         //particle: document.createElement('canvas'),
         pow: document.createElement('canvas'),
-        sblock: document.createElement('canvas'),
-        wall: document.createElement('canvas'),
-        bomb: document.createElement('canvas'),
-        fire: document.createElement('canvas'),
+        sblock: document.createElement('img'),
+        wall: document.createElement('img'),
+        bomb: document.createElement('img'),
+        fire: document.createElement('img'),
     }
 
     // Player
@@ -41,38 +41,24 @@ function resources() {
     powCtx.fill();
 
     // SBlock
-    res.sblock.width = 30;
-    res.sblock.height = 30;
-    let sblockCtx = res.sblock.getContext('2d');
-    sblockCtx.fillStyle = "orange";
-    sblockCtx.beginPath();
-    sblockCtx.fillRect(0, 0, res.sblock.width, res.sblock.height);
+    res.sblock.width = 50;
+    res.sblock.height = 50;
+    res.sblock.src = "image/sblock.png";
 
     // Wall
     res.wall.width = 50;
     res.wall.height = 50;
-    let wallCtx = res.wall.getContext('2d');
-    wallCtx.fillStyle = "blue";
-    wallCtx.beginPath();
-    wallCtx.fillRect(0, 0, res.wall.width, res.wall.height);
-    
+    res.wall.src = "image/wall.png";
+
     // Bomb
     res.bomb.width = 50;
     res.bomb.height = 50;
-    let bombCtx = res.bomb.getContext('2d');
-    bombCtx.fillStyle = "green";
-    bombCtx.beginPath();
-    bombCtx.arc(25, 25, 25, 0, 2 * Math.PI);
-    bombCtx.fill();
+    res.bomb.src = "image/bomb.png";
 
     // Fire
     res.fire.width = 50;
     res.fire.height = 50;
-    let fireCtx = res.fire.getContext('2d');
-    fireCtx.fillStyle = "yellow";
-    fireCtx.beginPath();
-    fireCtx.arc(25, 25, 25, 0, 2 * Math.PI);
-    fireCtx.fill();
+    res.fire.src = "image/fire.jpg";
 
     return res;
 }
@@ -109,7 +95,7 @@ export class Draw {
         ctx.drawImage(res.player, 0, 0, 50, 50);
 //        ctx.rotate(angle);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = "black";  
+        ctx.fillStyle = "black";
     }
 
     draw_pow(x, y, contnet) {
@@ -120,28 +106,32 @@ export class Draw {
     }
 
     draw_sblock(x, y) {
-        ctx.translate(x-25, y-25);
-        ctx.drawImage(res.sblock, 0, 0);
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = "black";  
-    }
-    
-    draw_wall(x, y) {
-        ctx.translate(x-25, y-25);
-        ctx.drawImage(res.wall, 0, 0);
+        ctx.translate(x, y);
+        ctx.translate(-25, -25);
+        ctx.drawImage(res.sblock, 0, 0, 50, 50);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.fillStyle = "black";
     }
-    
-    draw_bomb(x, y) {
-        ctx.translate(x-25, y-25);
-        ctx.drawImage(res.bomb, 0, 0);
+
+    draw_wall(x, y) {
+        ctx.translate(x, y);
+        ctx.translate(-25, -25);
+        ctx.drawImage(res.wall, 0, 0, 50, 50);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = "black";  
+        ctx.fillStyle = "black";
+    }
+
+    draw_bomb(x, y) {
+        ctx.translate(x, y);
+        ctx.translate(-25, -25);
+        ctx.drawImage(res.bomb, 0, 0, 50, 50);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.fillStyle = "black";
     }
     draw_fire(x, y) {
-        ctx.translate(x-25, y-25);
-        ctx.drawImage(res.fire, 0, 0);
+        ctx.translate(x, y);
+        ctx.translate(-25, -25);
+        ctx.drawImage(res.fire, 0, 0, 50, 50);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.fillStyle = "black";
     }
@@ -152,5 +142,5 @@ export class Draw {
     //imports.Math_atan = Math.atan;
     //imports.sin = Math.sin;
     //imports.cos = Math.cos;
-    
+
 }
