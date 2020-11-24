@@ -7,10 +7,9 @@ let ctx = canvas.getContext("2d");
 function resources() {
     let res = {
         player: document.createElement('img'),
-        //	enemy: document.createElement('canvas'),
-        //	bullet: document.createElement('canvas'),
-        //particle: document.createElement('canvas'),
-        pow: document.createElement('canvas'),
+        bomb_power: document.createElement('canvas'),
+        bomb_num: document.createElement('canvas'),
+        player_speed: document.createElement('canvas'),
         sblock: document.createElement('img'),
         wall: document.createElement('img'),
         bomb: document.createElement('img'),
@@ -31,14 +30,32 @@ function resources() {
 //    plCtx.arc(25, 25, 25, 0, 2 * Math.PI);
 //    plCtx.fill();
 
-    // Pow
-    res.pow.width = 50;
-    res.pow.height = 50;
-    let powCtx = res.pow.getContext('2d');
-    powCtx.fillStyle = "red";
-    powCtx.beginPath();
-    powCtx.arc(25, 25, 25, 0, 2 * Math.PI);
-    powCtx.fill();
+    // Pow_bomb_power
+    res.bomb_power.width = 50;
+    res.bomb_power.height = 50;
+    let bomb_powerCtx = res.bomb_power.getContext('2d');
+    bomb_powerCtx.fillStyle = "red";
+    bomb_powerCtx.beginPath();
+    bomb_powerCtx.arc(25, 25, 25, 0, 2 * Math.PI);
+    bomb_powerCtx.fill();
+
+    // Pow_bomb_num
+    res.bomb_num.width = 50;
+    res.bomb_num.height = 50;
+    let bomb_numCtx = res.bomb_num.getContext('2d');
+    bomb_numCtx.fillStyle = "yellow";
+    bomb_numCtx.beginPath();
+    bomb_numCtx.arc(25, 25, 25, 0, 2 * Math.PI);
+    bomb_numCtx.fill();
+
+    // Pow_player_speed
+    res.player_speed.width = 50;
+    res.player_speed.height = 50;
+    let player_speedCtx = res.player_speed.getContext('2d');
+    player_speedCtx.fillStyle = "white";
+    player_speedCtx.beginPath();
+    player_speedCtx.arc(25, 25, 25, 0, 2 * Math.PI);
+    player_speedCtx.fill();
 
     // SBlock
     res.sblock.width = 50;
@@ -98,9 +115,15 @@ export class Draw {
         ctx.fillStyle = "black";
     }
 
-    draw_pow(x, y, contnet) {
+    draw_pow(x, y, pow_content) {
         ctx.translate(x-25, y-25);
-        ctx.drawImage(res.pow, 0, 0);
+        if(pow_content == 0) {
+            ctx.drawImage(res.bomb_power, 0, 0);
+        } else if(pow_content == 1) {
+            ctx.drawImage(res.bomb_num, 0, 0);
+        } else if(pow_content == 2){
+            ctx.drawImage(res.player_speed, 0, 0);
+        }
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.fillStyle = "black";  
     }
