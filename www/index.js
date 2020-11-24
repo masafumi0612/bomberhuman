@@ -73,26 +73,58 @@ function processKey(key, b) {
     } 
 }
 
+////////////////////////////////////////////////////////////////
+// Gamepads handling
+////////////////////////////////////////////////////////////////
+
+// Needs "gamepadconnected" handler even if empty.
+function init_gamepads(gp) {
+    if (debug) {
+      console.log("Gamepad connected at index:%d buttons:%d axes:%d [%s]",
+                  gp.index, gp.buttons.length, gp.axes.length, gp.id);
+    }
+  }
+  
+  function scan_gamepads() {
+    // Chrome should refresh gamepads everytime you read.
+    var gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+  
+    for (var i = 0; i < gamepads.length; i++) {
+      var pad = gamepads[i];
+      if (pad) {
+        // Send state to WASM
+        if (pad.axes[0] < -0.5) {
+            gamedata.toggle_left(true, i);
+        } else {
+            gamedata.toggle_left(false, i);
+        }
+        if (pad.axes[0] >  0.5) {
+            gamedata.toggle_right(true, i);
+        } else {
+            gamedata.toggle_right(false, i);
+        }
+        if (pad.axes[1] <  -0.5) {
+            gamedata.toggle_up(true, i);
+        }else {
+            gamedata.toggle_up(false, i);
+        }
+        if (pad.axes[1] >  0.5) {
+            gamedata.toggle_down(true, i);
+        }else {
+            gamedata.toggle_down(false, i);
+        }
+        if (pad.buttons[0].pressed) {
+            gamedata.put_bomb(true, i);
+        } else {
+            gamedata.put_bomb(false, i);
+        }
+      }
+    }
+  }  
 
 document.addEventListener('keydown', e => processKey(e.key, true));
 document.addEventListener('keyup', e => processKey(e.key, false));
-/*
-function resize() {
-    gamedata = GameData.new();
-}
-// Resizing
-window.addEventListener('resize', () => {
-    resize();
-    let i = 0;
-    let player_x = 300;
-    let player_y = 200;
-    for(i = 0; i < num_player; i = i + 1){
-        gamedata.create_player(player_x, player_y);
-        player_x = player_x + 100;
-        player_y = player_y + 100;
-    }    
-});
-*/
+document.addEventListener("gamepadconnected", e => init_gamepads(e.gamepad));
 
 // Game loop
 let start = null;
@@ -108,6 +140,7 @@ let drawAndUpdate = (timestamp) => {
 
     // Update and draw
     let progress = (timestamp - prevTimestamp) / 1000;
+    scan_gamepads();
     gamedata.update(progress);
 //    clear_screen();
     gamedata.draw();
