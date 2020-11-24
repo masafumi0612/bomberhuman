@@ -1,5 +1,5 @@
 use crate::game_state::GameState;
-use crate::models::SBlock;
+use crate::models::{SBlock, Pow};
 use crate::geometry::{Collide, Position};
 //use crate::util;
 
@@ -119,7 +119,7 @@ impl CollisionsController {
         for pow in &mut state.world.pow {
             let mut x_distance = state.world.player[num_player].vector.position.x - pow.position.x;
             let mut y_distance = state.world.player[num_player].vector.position.y - pow.position.y;
-            if x_distance.abs() < grid / 2.0 && y_distance.abs() < grid / 2.0 && pow.whose == 100 {
+            if x_distance.abs() < grid / 2.0 && y_distance.abs() < grid / 2.0 && pow.whose == 100 && state.world.player[num_player].alive {
                 pow.whose = num_player;
                 match pow.content {
                     0 => state.world.player[num_player].bomb_power += 1,
@@ -187,18 +187,22 @@ impl CollisionsController {
             i+= 1;
         }
         collision_flag
-        /*
-        for sblock in &state.world.sblock {
-            if fire_position_x == sblock.position.x && fire_position_y == sblock.position.y {
-                fire_sblock_collision_flag = true;
-                sblock_fire_collision_id.push(sblock_id);
+    }
+
+    pub fn fire_pows_collision(pow: &mut Vec<Pow>, fire_position_x: f64, fire_position_y: f64) -> bool {
+        let mut i: usize = 0;
+        let mut collision_flag: bool = false;
+        while i < pow.len() {
+            if fire_position_x == pow[i].position.x && fire_position_y == pow[i].position.y {
+                &pow.remove(i);
+                collision_flag = true;
                 break;
             }
-            sblock_id += 1;
+            i+= 1;
         }
-        fire_sblock_collision_flag
-        */
+        collision_flag
     }
+    
 
     pub fn bomb_fire_collision(state: &mut GameState) {
         for bombs in &mut state.world.bomb {
@@ -211,57 +215,4 @@ impl CollisionsController {
             }
         }
     }
-/*
-    fn handle_bullet_collisions(state: &mut GameState) {
-        let old_enemy_count = state.world.enemies.len();
-
-        // We introduce a scope to shorten the lifetime of the borrows below
-        {
-            let bullets = &mut state.world.bullets;
-            let enemies = &mut state.world.enemies;
-            let particles = &mut state.world.particles;
-
-            // Note: this is O(n * m) where n = amount of bullets and n = amount of enemies
-            // This is pretty bad, but we don't care because n and m are small
-            util::fast_retain(bullets, |bullet| {
-                // Remove the first enemy that collides with a bullet (if any)
-                // Add an explosion on its place
-                if let Some((index, position)) = enemies
-                    .iter()
-                    .enumerate()
-                    .find(|&(_, enemy)| enemy.collides_with(bullet))
-                    .map(|(index, enemy)| (index, enemy.position()))
-                {
-                    util::make_explosion(particles, &position, 10);
-                    enemies.remove(index);
-                    false
-                } else {
-                    true
-                }
-            });
-        }
-
-        let killed_enemies = (old_enemy_count - state.world.enemies.len()) as u32;
-        state.score += SCORE_PER_ENEMY * killed_enemies;
-    }
-*/
-    // Handles collisions between the player and the enemies
-
-/*
-    fn handle_player_collisions(state: &mut GameState) {
-        if state
-            .world
-            .enemies
-            .iter()
-            .any(|enemy| state.world.player.collides_with(enemy))
-        {
-            // Make an explosion where the player was
-            let ppos = state.world.player.position();
-            util::make_explosion(&mut state.world.particles, &ppos, 8);
-
-            state.reset();
-        }
-    }
-*/
 }
-
