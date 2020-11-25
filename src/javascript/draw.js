@@ -7,9 +7,9 @@ let ctx = canvas.getContext("2d");
 function resources() {
     let res = {
         player: document.createElement('img'),
-        bomb_power: document.createElement('canvas'),
-        bomb_num: document.createElement('canvas'),
-        player_speed: document.createElement('canvas'),
+        bomb_power: document.createElement('img'),
+        bomb_num: document.createElement('img'),
+        player_speed: document.createElement('img'),
         sblock: document.createElement('img'),
         wall: document.createElement('img'),
         bomb: document.createElement('img'),
@@ -33,29 +33,17 @@ function resources() {
     // Pow_bomb_power
     res.bomb_power.width = 50;
     res.bomb_power.height = 50;
-    let bomb_powerCtx = res.bomb_power.getContext('2d');
-    bomb_powerCtx.fillStyle = "red";
-    bomb_powerCtx.beginPath();
-    bomb_powerCtx.arc(25, 25, 25, 0, 2 * Math.PI);
-    bomb_powerCtx.fill();
+    res.bomb_power.src = "image/bomb_power.png";
 
     // Pow_bomb_num
     res.bomb_num.width = 50;
     res.bomb_num.height = 50;
-    let bomb_numCtx = res.bomb_num.getContext('2d');
-    bomb_numCtx.fillStyle = "yellow";
-    bomb_numCtx.beginPath();
-    bomb_numCtx.arc(25, 25, 25, 0, 2 * Math.PI);
-    bomb_numCtx.fill();
+    res.bomb_num.src = "image/bomb_num.png";
 
     // Pow_player_speed
     res.player_speed.width = 50;
     res.player_speed.height = 50;
-    let player_speedCtx = res.player_speed.getContext('2d');
-    player_speedCtx.fillStyle = "white";
-    player_speedCtx.beginPath();
-    player_speedCtx.arc(25, 25, 25, 0, 2 * Math.PI);
-    player_speedCtx.fill();
+    res.player_speed.src = "image/player_speed.png";
 
     // SBlock
     res.sblock.width = 50;
@@ -116,16 +104,27 @@ export class Draw {
     }
 
     draw_pow(x, y, pow_content) {
-        ctx.translate(x-25, y-25);
         if(pow_content == 0) {
-            ctx.drawImage(res.bomb_power, 0, 0);
+            ctx.translate(x, y);
+            ctx.translate(-25, -25);
+            ctx.drawImage(res.bomb_power, 0, 0, 50, 50);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.fillStyle = "black";
         } else if(pow_content == 1) {
-            ctx.drawImage(res.bomb_num, 0, 0);
+            ctx.translate(x, y);
+            ctx.translate(-25, -25);
+            ctx.drawImage(res.bomb_num, 0, 0, 50, 50);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.fillStyle = "black";
         } else if(pow_content == 2){
-            ctx.drawImage(res.player_speed, 0, 0);
+            ctx.translate(x, y);
+            ctx.translate(-25, -25);
+            ctx.drawImage(res.player_speed, 0, 0, 50, 50);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.fillStyle = "black";
         }
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.fillStyle = "black";  
+        ctx.fillStyle = "black";
     }
 
     draw_sblock(x, y) {
