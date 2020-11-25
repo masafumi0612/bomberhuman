@@ -1,5 +1,5 @@
 use crate::game_state::GameState;
-use crate::models::{SBlock, Pow};
+use crate::models::{Bomb, SBlock, Pow};
 use crate::geometry::{Collide, Position};
 //use crate::util;
 
@@ -202,17 +202,33 @@ impl CollisionsController {
         }
         collision_flag
     }
-    
-
+  
+    pub fn fire_bomb_collision(all_bombs: &mut Vec<Vec<Bomb>>, num_player: usize, i: usize, x: f64, y: f64, grid: f64) -> bool {
+        let mut collision_flag: bool = false;
+        let fire_position_x = all_bombs[num_player][i].position.x + grid * x;
+        let fire_position_y = all_bombs[num_player][i].position.y + grid * y;
+        for bombs in all_bombs {
+            for bomb in bombs {
+                if fire_position_x == bomb.position.x && fire_position_y == bomb.position.y {
+                    bomb.ttl = 0.00000000001;
+                    collision_flag = true;
+                    break;
+                }
+            }
+        }
+        collision_flag
+    }
+/*
     pub fn bomb_fire_collision(state: &mut GameState) {
         for bombs in &mut state.world.bomb {
             for bomb in bombs {
                 for fire in &state.world.fire {
                     if bomb.position.x == fire.position.x && bomb.position.y == fire.position.y {
-                        bomb.ttl = 0.0000001;
+                        bomb.ttl = 0.000000000001;
                     }
                 }
             }
         }
     }
+    */
 }
