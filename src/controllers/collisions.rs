@@ -167,6 +167,13 @@ impl CollisionsController {
                 break;
             }            
         }
+        if state.world.player[num_player].alive == false {
+            for pow in &mut state.world.pow {
+                if pow.whose == num_player {
+                    pow.whose = 100;
+                }
+            }
+        }
     }
 
     pub fn fire_walls_collision(state: &GameState, fire_position_x: f64, fire_position_y: f64)-> bool {
