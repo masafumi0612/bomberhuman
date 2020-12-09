@@ -8,3 +8,4 @@ wasm-pack.log
 www/LICENSE-*
 www/node_modules/
 www/package-lock.json
+.DS_Store

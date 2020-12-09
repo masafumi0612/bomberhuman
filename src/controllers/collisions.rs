@@ -1,5 +1,5 @@
 use crate::game_state::GameState;
-use crate::models::SBlock;
+use crate::models::{Bomb, SBlock, Pow};
 use crate::geometry::{Collide, Position};
 //use crate::util;
 
@@ -119,13 +119,18 @@ impl CollisionsController {
         for pow in &mut state.world.pow {
             let mut x_distance = state.world.player[num_player].vector.position.x - pow.position.x;
             let mut y_distance = state.world.player[num_player].vector.position.y - pow.position.y;
-            if x_distance.abs() < grid / 2.0 && y_distance.abs() < grid / 2.0 && pow.whose == 100 {
+            if x_distance.abs() < grid / 2.0 && y_distance.abs() < grid / 2.0 && pow.whose == 100 && state.world.player[num_player].alive {
                 pow.whose = num_player;
                 match pow.content {
                     0 => state.world.player[num_player].bomb_power += 1,
                     1 => state.world.player[num_player].bomb_num += 1,
-                    2 => state.world.player[num_player].speed += 100.0,
-                    _ => println!("aa"),
+                    2 => {
+                        state.world.player[num_player].speed += 50.0; 
+                        if state.world.player[num_player].speed >= 300.0 {
+                            state.world.player[num_player].speed = 250.0;
+                        }
+                    },
+                    _ => println!(),
                 }
             }
         }
@@ -153,11 +158,11 @@ impl CollisionsController {
         for fire in &state.world.fire {
             let x_distance = state.world.player[num_player].vector.position.x - fire.position.x;
             let y_distance = state.world.player[num_player].vector.position.y - fire.position.y;
-            if x_distance.abs() < grid && y_distance.abs() < grid / 2.0 {
+            if x_distance.abs() < grid / 1.5 && y_distance.abs() < grid / 2.0 {
                 state.world.player[num_player].alive = false;
                 break;
             }
-            if y_distance.abs() < grid && x_distance.abs() < grid / 2.0 {
+            if y_distance.abs() < grid / 1.5 && x_distance.abs() < grid / 2.0 {
                 state.world.player[num_player].alive = false;
                 break;
             }            
@@ -187,81 +192,48 @@ impl CollisionsController {
             i+= 1;
         }
         collision_flag
-        /*
-        for sblock in &state.world.sblock {
-            if fire_position_x == sblock.position.x && fire_position_y == sblock.position.y {
-                fire_sblock_collision_flag = true;
-                sblock_fire_collision_id.push(sblock_id);
-                break;
-            }
-            sblock_id += 1;
-        }
-        fire_sblock_collision_flag
-        */
     }
 
+    pub fn fire_pows_collision(pow: &mut Vec<Pow>, fire_position_x: f64, fire_position_y: f64) -> bool {
+        let mut i: usize = 0;
+        let mut collision_flag: bool = false;
+        while i < pow.len() {
+            if fire_position_x == pow[i].position.x && fire_position_y == pow[i].position.y && pow[i].whose == 100{
+                &pow.remove(i);
+                collision_flag = true;
+                break;
+            }
+            i+= 1;
+        }
+        collision_flag
+    }
+  
+    pub fn fire_bomb_collision(all_bombs: &mut Vec<Vec<Bomb>>, num_player: usize, i: usize, x: f64, y: f64, grid: f64) -> bool {
+        let mut collision_flag: bool = false;
+        let fire_position_x = all_bombs[num_player][i].position.x + grid * x;
+        let fire_position_y = all_bombs[num_player][i].position.y + grid * y;
+        for bombs in all_bombs {
+            for bomb in bombs {
+                if fire_position_x == bomb.position.x && fire_position_y == bomb.position.y {
+                    bomb.ttl = 0.00000000001;
+                    collision_flag = true;
+                    break;
+                }
+            }
+        }
+        collision_flag
+    }
+/*
     pub fn bomb_fire_collision(state: &mut GameState) {
         for bombs in &mut state.world.bomb {
             for bomb in bombs {
                 for fire in &state.world.fire {
                     if bomb.position.x == fire.position.x && bomb.position.y == fire.position.y {
-                        bomb.ttl = 0.0000001;
+                        bomb.ttl = 0.000000000001;
                     }
                 }
             }
         }
     }
-/*
-    fn handle_bullet_collisions(state: &mut GameState) {
-        let old_enemy_count = state.world.enemies.len();
-
-        // We introduce a scope to shorten the lifetime of the borrows below
-        {
-            let bullets = &mut state.world.bullets;
-            let enemies = &mut state.world.enemies;
-            let particles = &mut state.world.particles;
-
-            // Note: this is O(n * m) where n = amount of bullets and n = amount of enemies
-            // This is pretty bad, but we don't care because n and m are small
-            util::fast_retain(bullets, |bullet| {
-                // Remove the first enemy that collides with a bullet (if any)
-                // Add an explosion on its place
-                if let Some((index, position)) = enemies
-                    .iter()
-                    .enumerate()
-                    .find(|&(_, enemy)| enemy.collides_with(bullet))
-                    .map(|(index, enemy)| (index, enemy.position()))
-                {
-                    util::make_explosion(particles, &position, 10);
-                    enemies.remove(index);
-                    false
-                } else {
-                    true
-                }
-            });
-        }
-
-        let killed_enemies = (old_enemy_count - state.world.enemies.len()) as u32;
-        state.score += SCORE_PER_ENEMY * killed_enemies;
-    }
-*/
-    // Handles collisions between the player and the enemies
-
-/*
-    fn handle_player_collisions(state: &mut GameState) {
-        if state
-            .world
-            .enemies
-            .iter()
-            .any(|enemy| state.world.player.collides_with(enemy))
-        {
-            // Make an explosion where the player was
-            let ppos = state.world.player.position();
-            util::make_explosion(&mut state.world.particles, &ppos, 8);
-
-            state.reset();
-        }
-    }
-*/
+    */
 }
-
