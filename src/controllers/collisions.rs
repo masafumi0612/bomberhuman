@@ -125,9 +125,9 @@ impl CollisionsController {
                     0 => state.world.player[num_player].bomb_power += 1,
                     1 => state.world.player[num_player].bomb_num += 1,
                     2 => {
-                        state.world.player[num_player].speed += 50.0; 
-                        if state.world.player[num_player].speed >= 300.0 {
-                            state.world.player[num_player].speed = 250.0;
+                        state.world.player[num_player].speed += 70.0; 
+                        if state.world.player[num_player].speed > 350.0 {
+                            state.world.player[num_player].speed = 350.0;
                         }
                     },
                     _ => println!(),
