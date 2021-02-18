@@ -37,7 +37,7 @@ const BOMB_NUM: usize = 1;
 const FIRE_TTL: c_double = 1.0;
 const WALL_SIZE_WIDTH: f64 = 50.0;
 const WALL_SIZE_HEIGHT: f64 = 50.0;
-const SBLOCK_MAKE_PERSENT: usize = 50;
+const SBLOCK_MAKE_PERSENT: usize = 70;
 const GRID: f64 = 50.0;
 
 #[wasm_bindgen]
