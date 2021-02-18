@@ -37,6 +37,7 @@ const BOMB_NUM: usize = 1;
 const FIRE_TTL: c_double = 1.0;
 const WALL_SIZE_WIDTH: f64 = 50.0;
 const WALL_SIZE_HEIGHT: f64 = 50.0;
+const SBLOCK_MAKE_PERSENT: usize = 50;
 const GRID: f64 = 50.0;
 
 #[wasm_bindgen]
@@ -120,7 +121,7 @@ impl GameData {
                 let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
                 let new_sblock = SBlock::new(new_sblock_position);
                 let secret_number = rand::thread_rng().gen_range(0, 100);
-                if secret_number <= 50 {
+                if secret_number <= SBLOCK_MAKE_PERSENT {
                     self.state.world.sblock.push(new_sblock);
                 }
                 new_sblock_position_x += GRID * 2.0;
@@ -136,7 +137,7 @@ impl GameData {
                 let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
                 let new_sblock = SBlock::new(new_sblock_position);
                 let secret_number = rand::thread_rng().gen_range(0, 100);
-                if secret_number <= 50 {
+                if secret_number <= SBLOCK_MAKE_PERSENT {
                     self.state.world.sblock.push(new_sblock);
                 }
                 new_sblock_position_x += GRID;
@@ -152,7 +153,7 @@ impl GameData {
                 let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
                 let new_sblock = SBlock::new(new_sblock_position);
                 let secret_number = rand::thread_rng().gen_range(0, 100);
-                if secret_number <= 50 {
+                if secret_number <= SBLOCK_MAKE_PERSENT {
                     self.state.world.sblock.push(new_sblock);
                 }
                 new_sblock_position_x += GRID;
@@ -168,7 +169,7 @@ impl GameData {
                 let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
                 let new_sblock = SBlock::new(new_sblock_position);
                 let secret_number = rand::thread_rng().gen_range(0, 100);
-                if secret_number <= 50 {
+                if secret_number <= SBLOCK_MAKE_PERSENT {
                     self.state.world.sblock.push(new_sblock);
                 }
                 new_sblock_position_x += GRID;
@@ -183,7 +184,7 @@ impl GameData {
             let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
             let new_sblock = SBlock::new(new_sblock_position);
             let secret_number = rand::thread_rng().gen_range(0, 100);
-            if secret_number <= 50 {
+            if secret_number <= SBLOCK_MAKE_PERSENT {
             self.state.world.sblock.push(new_sblock);
             }
             new_sblock_position_y += GRID;
@@ -195,7 +196,7 @@ impl GameData {
             let new_sblock_position = Point::new(new_sblock_position_x, new_sblock_position_y);
             let new_sblock = SBlock::new(new_sblock_position);
             let secret_number = rand::thread_rng().gen_range(0, 100);
-            if secret_number <= 50 {
+            if secret_number <= SBLOCK_MAKE_PERSENT {
             self.state.world.sblock.push(new_sblock);
             }
             new_sblock_position_y += GRID;
@@ -237,7 +238,7 @@ impl GameData {
     pub fn create_pow(&mut self) {
         for i in 0..self.state.world.sblock.len() {
             let secret_number = rand::thread_rng().gen_range(0, 100);
-            if secret_number <= 50 {
+            if secret_number <= SBLOCK_MAKE_PERSENT {
                 let new_pow_content = rand::thread_rng().gen_range(0, 3);
                 let new_pow_position = Point::new(self.state.world.sblock[i].position.x, self.state.world.sblock[i].position.y);
                 let new_pow = Pow::new(new_pow_content, new_pow_position);
@@ -447,9 +448,12 @@ impl GameData {
             draw.draw_fire(fire.position.x, fire.position.y);
         }
 
-        for player in &self.state.world.player {
-            draw.draw_player(player.x(), player.y(), player.direction(), player.alive);
+        for i in 0..self.state.world.player.len() {
+            draw.draw_player(self.state.world.player[i].x(), self.state.world.player[i].y(), self.state.world.player[i].direction(), self.state.world.player[i].alive, i);
         }
+/*        for player in &self.state.world.player {
+            draw.draw_player(player.x(), player.y(), player.direction(), player.alive);
+        }*/
     }
 }
 
@@ -475,7 +479,7 @@ extern "C" {
     pub fn clear_screen(this: &Draw);
 
     #[wasm_bindgen(method)]
-    pub fn draw_player(this: &Draw, _: c_double, _: c_double, _: c_double, _: bool);
+    pub fn draw_player(this: &Draw, _: c_double, _: c_double, _: c_double, _: bool, c_double: usize);
 
     #[wasm_bindgen(method)]
     pub fn draw_wall(this: &Draw, _: c_double, _: c_double);

@@ -6,7 +6,10 @@ let ctx = canvas.getContext("2d");
 // Returns an object containing resources that will be used later for drawing
 function resources() {
     let res = {
-        player: document.createElement('img'),
+        player1: document.createElement('img'),
+        player2: document.createElement('img'),
+        player3: document.createElement('img'),
+        player4: document.createElement('img'),
         bomb_power: document.createElement('img'),
         bomb_num: document.createElement('img'),
         player_speed: document.createElement('img'),
@@ -16,10 +19,26 @@ function resources() {
         fire: document.createElement('img'),
     }
 
-    // Player
-    res.player.width = 50;
-    res.player.height = 50;
-    res.player.src = "image/player.png";
+    // Player1
+    res.player1.width = 50;
+    res.player1.height = 50;
+    res.player1.src = "image/player1.png";
+
+    // Player2
+    res.player2.width = 50;
+    res.player2.height = 50;
+    res.player2.src = "image/player2.png";
+
+    // Player3
+    res.player3.width = 50;
+    res.player3.height = 50;
+    res.player3.src = "image/player3.png";
+
+    // Player4
+    res.player4.width = 50;
+    res.player4.height = 50;
+    res.player4.src = "image/player4.png";
+
 
 //    res.player.width = 50;
 //    res.player.height = 50;
@@ -90,14 +109,23 @@ export class Draw {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    draw_player(x, y, angle, alive) {
+    draw_player(x, y, angle, alive, num_player) {
         if (!alive) {
             return;
         }
         ctx.translate(x, y);
         ctx.rotate(angle);
         ctx.translate(-25, -25);
-        ctx.drawImage(res.player, 0, 0, 50, 50);
+        switch(num_player) {
+            case 0: ctx.drawImage(res.player1, 0, 0, 50, 50);
+            break;
+            case 1: ctx.drawImage(res.player2, 0, 0, 50, 50);
+            break;
+            case 2: ctx.drawImage(res.player3, 0, 0, 50, 50);
+            break;
+            case 3: ctx.drawImage(res.player4, 0, 0, 50, 50);
+            break;
+        }
 //        ctx.rotate(angle);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.fillStyle = "black";
