@@ -67,7 +67,7 @@ function processKey(key, b) {
     case "k":
     gamedata.toggle_down(b, 3);
     break;
-    case "b":
+    case "o":
     gamedata.put_bomb(b, 3);
     break;
     } 

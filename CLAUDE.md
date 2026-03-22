@@ -61,7 +61,7 @@ docs/                     # ビルド済みWASM + JS (静的デモ用)
 | P1 | 矢印キー | Space |
 | P2 | WASD | X |
 | P3 | TFGH | B |
-| P4 | IJKL | B |
+| P4 | IJKL | O |
 
 ゲームパッド: アナログスティックで移動、ボタン0で爆弾設置。
 
