@@ -2,6 +2,8 @@
 
 Rustで実装したボンバーマン風マルチプレイヤーブラウザゲーム。RustのゲームロジックをWebAssemblyにコンパイルし、CanvasAPIで描画します。最大4人同時プレイ対応。
 
+**GitHub Pages でプレイできます:** https://masafumi0612.github.io/bomberhuman/
+
 ## 操作方法
 
 | プレイヤー | 移動 | 爆弾設置 |
